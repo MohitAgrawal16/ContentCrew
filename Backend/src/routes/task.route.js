@@ -14,6 +14,6 @@ taskRouter.route("/").post(upload.fields([{
     maxCount: 10
 }]), createTask)
 
-taskRouter.route("/").get(getAllTasks);
+taskRouter.route("/:workspaceId").get(getAllTasks);
 
 export { taskRouter };
