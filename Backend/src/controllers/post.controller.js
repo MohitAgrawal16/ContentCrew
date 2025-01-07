@@ -25,11 +25,9 @@ const createPost = asyncHandler(async (req, res, next) => {
     media = media.map(file => file.url);
     
     let by=req.user._id;
-    let status="draft";
-
+    
     if(req.Owner){
         by=req.Owner;
-        status="draftWorkSpace";
     }
     
     if(!taskId){
@@ -42,7 +40,7 @@ const createPost = asyncHandler(async (req, res, next) => {
         caption,
         media,
         by,
-        status,
+        status:"draft",
         taskId
     })  
 
