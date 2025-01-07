@@ -3,7 +3,6 @@ import {upload} from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { createPost, uploadPost ,getAllPosts, getAlldraftPosts ,getPostofTask} from "../controllers/post.controller.js";
 import { checkOwner } from "../middlewares/postFor.middleware.js";
-import { get } from "mongoose";
 
 
 const postRouter = Router();
