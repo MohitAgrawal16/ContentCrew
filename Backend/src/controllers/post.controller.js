@@ -86,7 +86,7 @@ const getAllPosts = asyncHandler(async (req, res, next) => {
 const getAlldraftPosts = asyncHandler(async (req, res, next) => {
         
         const posts = await Post.find(
-            { $and:[{status:"draft"},{by:req.user._id}] }  
+            { $and:[{status:"draft"},{by:req.user._id},{taskId:null}] }  
         )
         return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
 })
