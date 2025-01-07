@@ -10,6 +10,10 @@ const createPost = asyncHandler(async (req, res, next) => {
 
     const mediaLocalPaths = req.files?.media?.map(temp => temp.path)
   
+    if(mediaLocalPaths==null){
+        throw new ApiError(400, "Please provide media files")
+    }
+
     let media = await Promise.all(mediaLocalPaths.map(async (path) => {
         return await uploadOnCloudinary(path)
     }))
@@ -55,7 +59,7 @@ const createPost = asyncHandler(async (req, res, next) => {
 
 const uploadPost = asyncHandler(async (req, res, next) => {
     const { postId } = req.body
-    console.log(postId);
+   // console.log(postId);
     const post = await Post.findById(postId)
 
     if (!post) {
