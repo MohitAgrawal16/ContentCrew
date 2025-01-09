@@ -1,6 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import Post from "../components/Post";
+import TopBar from "../components/TopBar";
 
 const Home = () => {
   const posts = [
@@ -32,27 +33,7 @@ const Home = () => {
       {/* Main Content */}
       <div className="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col">
         {/* Top Bar */}
-        <div className="flex items-center justify-between bg-white px-6 py-4 shadow-md">
-          <h1 className="text-lg font-semibold">Home</h1>
-          <div className="flex items-center space-x-4">
-            <input
-              type="text"
-              placeholder="Search"
-              className="px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-            />
-            <div className="relative">
-              <span className="material-icons cursor-pointer">notifications</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <img
-                src="https://via.placeholder.com/40"
-                alt="Profile"
-                className="w-10 h-10 rounded-full"
-              />
-              <span className="text-sm font-medium">Tom Cook</span>
-            </div>
-          </div>
-        </div>
+         <TopBar />
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6 flex justify-center">
