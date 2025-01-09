@@ -47,7 +47,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
         username,
         firstName,
         lastName,
-        dp:dp.url
+        dp: dp==null?null:dp.url
     })
    
     if(!user){
