@@ -7,6 +7,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
 import Workspace from './pages/Workspace'
+import WorkspaceDetails from './pages/WorkspaceDetails'
 
 import { ToastContainer } from 'react-toastify'
 
@@ -26,6 +27,7 @@ function App() {
           <Route path='/register' element={<Register />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/workspace' element={<Workspace />} />
+          <Route path='/workspace/:workspaceId' element={<WorkspaceDetails userRole="owner"/>} />
         </Routes>
       </Router>
       <ToastContainer />
