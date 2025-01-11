@@ -4,13 +4,14 @@ import Task from "../components/Task";
 import AddnewTask from "../components/AddnewTask";
 
 const WorkspaceDetails = ({ userRole }) => {
-
   const [tasks, setTasks] = useState([
     { id: 1, name: "Task 1", status: "todo" },
     { id: 2, name: "Task 2", status: "in-progress" },
   ]);
   const [editors, setEditors] = useState(["John Doe", "Jane Smith"]);
   const [newTask, setNewTask] = useState("");
+  const [isAddingEditor, setIsAddingEditor] = useState(false);
+  const [newEditor, setNewEditor] = useState("");
 
   const addTask = () => {
     if (newTask.trim() === "") return;
@@ -34,16 +35,16 @@ const WorkspaceDetails = ({ userRole }) => {
     setEditors(editors.filter((e) => e !== editor));
   };
 
-  const addEditor = () => {
-    const editorName = prompt("Enter the editor's name:");
-    if (editorName && editorName.trim() !== "") {
-      setEditors([...editors, editorName]);
+  const handleAddEditor = () => {
+    if (newEditor.trim() !== "") {
+      setEditors([...editors, newEditor]);
+      setNewEditor("");
+      setIsAddingEditor(false);
     }
   };
 
   const handleAddTask = (newTask) => {
     console.log("New Task Added:", newTask);
-    // Add the new task to your task list here
   };
 
   return (
@@ -79,20 +80,43 @@ const WorkspaceDetails = ({ userRole }) => {
             ))}
           </ul>
           {userRole === "owner" && (
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-              onClick={addEditor}
-            >
-              Add Editor
-            </button>
+            <div>
+              {!isAddingEditor ? (
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                  onClick={() => setIsAddingEditor(true)}
+                >
+                  Add Editor
+                </button>
+              ) : (
+                <div className="mt-4">
+                  <input
+                    type="text"
+                    placeholder="Enter editor's name"
+                    value={newEditor}
+                    onChange={(e) => setNewEditor(e.target.value)}
+                    className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    onClick={handleAddEditor}
+                    className="ml-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                  >
+                    Add
+                  </button>
+                  <button
+                    onClick={() => setIsAddingEditor(false)}
+                    className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
-        {
-            userRole==="owner" 
-            && (<AddnewTask handleAddTask={handleAddTask} />)
-        }
-     
+        {userRole === "owner" && <AddnewTask handleAddTask={handleAddTask} />}
+
         <div>
           <h3 className="text-lg font-semibold mb-4 mt-4">Tasks</h3>
           <div className="flex flex-col gap-4">
@@ -113,3 +137,4 @@ const WorkspaceDetails = ({ userRole }) => {
 };
 
 export default WorkspaceDetails;
+
