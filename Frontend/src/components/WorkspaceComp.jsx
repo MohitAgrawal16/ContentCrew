@@ -1,8 +1,18 @@
 import React from 'react';
+import  {useNavigate} from 'react-router-dom';
 
-const WorkspaceComp = ({ name, isOwner, onDelete }) => {
+const WorkspaceComp = ({id,name, isOwner, onDelete }) => {
+
+  const navigate = useNavigate();
+  
+  const handleClick = () =>{
+    navigate(`/workspace/${id}`);
+  }
+
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+     onClick={handleClick}>
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {/* Workspace Icon */}
@@ -21,12 +31,12 @@ const WorkspaceComp = ({ name, isOwner, onDelete }) => {
 
         {/* Actions */}
         <div className="flex items-center space-x-3">
-          <button 
+          {/* <button 
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="More options"
           >
             <span className="material-icons text-gray-600">more_vert</span>
-          </button>
+          </button> */}
           {isOwner && (
             <button 
               onClick={onDelete}

@@ -79,7 +79,7 @@ const Workspace = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {(activeTab === 'your' ? yourWorkspaces : editorWorkspaces).map((workspace) => (
                 <WorkspaceComp
-                  key={workspace.id}
+                  id={workspace.id}
                   name={workspace.name}
                   isOwner={workspace.isOwner}
                   onDelete={() => handleDelete(workspace.id)}
