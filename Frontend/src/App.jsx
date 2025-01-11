@@ -8,7 +8,7 @@ import Register from './pages/Register'
 import Profile from './pages/Profile'
 import Workspace from './pages/Workspace'
 import WorkspaceDetails from './pages/WorkspaceDetails'
-
+import TaskDetails from './pages/TaskDetails'
 import { ToastContainer } from 'react-toastify'
 
 
@@ -16,6 +16,16 @@ function App() {
   
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
+  
+  const sampleTask = {
+    title: "Task 1",
+    description: "This is a description of Task 1.",
+    mediaFiles: [
+      "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+      "https://via.placeholder.com/150",
+      "https://via.placeholder.com/150",
+    ],
+  };
   
 
   return (
@@ -28,6 +38,7 @@ function App() {
           <Route path='/profile' element={<Profile />} />
           <Route path='/workspace' element={<Workspace />} />
           <Route path='/workspace/:workspaceId' element={<WorkspaceDetails userRole="owner"/>} />
+          <Route path='/tasks/:taskId' element={<TaskDetails userRole="editor" task={sampleTask}/>} />
         </Routes>
       </Router>
       <ToastContainer />
