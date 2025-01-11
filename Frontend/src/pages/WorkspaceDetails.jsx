@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Task from "../components/Task";
+import AddnewTask from "../components/AddnewTask";
 
 const WorkspaceDetails = ({ userRole }) => {
+
   const [tasks, setTasks] = useState([
     { id: 1, name: "Task 1", status: "todo" },
     { id: 2, name: "Task 2", status: "in-progress" },
@@ -37,6 +39,11 @@ const WorkspaceDetails = ({ userRole }) => {
     if (editorName && editorName.trim() !== "") {
       setEditors([...editors, editorName]);
     }
+  };
+
+  const handleAddTask = (newTask) => {
+    console.log("New Task Added:", newTask);
+    // Add the new task to your task list here
   };
 
   return (
@@ -81,29 +88,13 @@ const WorkspaceDetails = ({ userRole }) => {
           )}
         </div>
 
-        {userRole === "owner" && (
-          <div className="bg-white shadow-md rounded-md p-6 mb-6">
-            <h3 className="text-lg font-semibold mb-4">Add New Task</h3>
-            <div className="flex items-center gap-4">
-              <input
-                type="text"
-                placeholder="Task name"
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-                onClick={addTask}
-              >
-                Add Task
-              </button>
-            </div>
-          </div>
-        )}
-
+        {
+            userRole==="owner" 
+            && (<AddnewTask handleAddTask={handleAddTask} />)
+        }
+     
         <div>
-          <h3 className="text-lg font-semibold mb-4">Tasks</h3>
+          <h3 className="text-lg font-semibold mb-4 mt-4">Tasks</h3>
           <div className="flex flex-col gap-4">
             {tasks.map((task) => (
               <Task
