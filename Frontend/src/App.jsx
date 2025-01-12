@@ -9,6 +9,7 @@ import Profile from './pages/Profile'
 import Workspace from './pages/Workspace'
 import WorkspaceDetails from './pages/WorkspaceDetails'
 import TaskDetails from './pages/TaskDetails'
+import PrivateRoute from './components/PrivateRoute'
 import { ToastContainer } from 'react-toastify'
 
 
@@ -32,13 +33,15 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+        <Route element={<PrivateRoute />} >
+          <Route path='/' element={<Home />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/workspace' element={<Workspace />} />
           <Route path='/workspace/:workspaceId' element={<WorkspaceDetails userRole="owner"/>} />
           <Route path='/tasks/:taskId' element={<TaskDetails userRole="editor" task={sampleTask}/>} />
+        </Route>
         </Routes>
       </Router>
       <ToastContainer />
