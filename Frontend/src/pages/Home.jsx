@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "../components/Sidebar";
 import Post from "../components/Post";
 import TopBar from "../components/TopBar";
+import NewPost from "../components/NewPost";
 
 const Home = () => {
   const posts = [
@@ -25,6 +26,23 @@ const Home = () => {
     },
   ];
 
+  const handleSaveDraft = (newPost) => {
+    console.log("Saved as Draft:", newPost);
+  };
+
+  const handlePost = (newPost) => {
+    setPosts((prev) => [
+      {
+        username: "You",
+        avatar: "https://via.placeholder.com/40",
+        content: newPost.caption,
+        image: newPost.images[0] || null,
+      },
+      ...prev,
+    ]);
+  };
+
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -36,6 +54,10 @@ const Home = () => {
          <TopBar />
 
         {/* Content Area */}
+        <div className="fixed top-24 right-10 z-50">
+          <NewPost handleSaveDraft={handleSaveDraft} handlePost={handlePost} />
+        </div>
+        
         <div className="flex-1 overflow-y-auto p-6 flex justify-center">
           <div className="max-w-xl w-full">
             {posts.map((post, index) => (
