@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import {Link ,useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import {login} from '../store/authSlice.js'
 
 function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,20 +30,27 @@ function Login() {
       },
       body: JSON.stringify({ email, password }),
     })
-      .then((res) => res.json())
+      .then((res) => {
+      //  console.log(res.ok);
+        if (!res.ok) {
+         return res.json().then((data) => {
+            throw new Error(data.message || 'Something went wrong!');
+          });
+        }
+        return res.json();
+      })
       .then((data) => {
-        console.log(data);
+       // console.log(data);
         if (data.error) {
           toast.error(data.error);
         } else {
           toast.success('Login Successful');
-         // localStorage.setItem('token', data.token);
+          dispatch(login(data.data.user));
           navigate('/');
         }
       })
       .catch((err) => {
-        console.log(err);
-        toast.error('Something went wrong');
+        toast.error(err.message);
       });
   };
 
