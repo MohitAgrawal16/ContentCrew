@@ -1,12 +1,12 @@
 import React from "react";
 
-const Post = ({ username, avatar, content, image }) => {
+const Post = ({ username, dp, caption, image }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-5 mb-6">
       {/* Header */}
       <div className="flex items-center mb-4">
         <img
-          src={avatar}
+          src={dp || "https://via.placeholder.com/150"}
           alt={`${username}'s avatar`}
           className="w-10 h-10 rounded-full mr-4"
         />
@@ -14,7 +14,7 @@ const Post = ({ username, avatar, content, image }) => {
       </div>
 
       {/* Content */}
-      <p className="text-gray-700 mb-4">{content}</p>
+      <p className="text-gray-700 mb-4">{caption}</p>
 
       {/* Image (if any) */}
       {image && (

@@ -1,30 +1,34 @@
-import React from "react";
+import React, { useEffect , useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Post from "../components/Post";
 import TopBar from "../components/TopBar";
 import NewPost from "../components/NewPost";
+import apiClient from "../utils/apiClient";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../store/authSlice";
+import { useDispatch } from "react-redux";
 
 const Home = () => {
-  const posts = [
-    {
-      username: "John Doe",
-      avatar: "https://via.placeholder.com/40",
-      content: "This is a sample post. Excited to share my thoughts here!",
-      image: "https://via.placeholder.com/400x200",
-    },
-    {
-      username: "Jane Smith",
-      avatar: "https://via.placeholder.com/40",
-      content: "Loving the new design of this platform!",
-      image: null,
-    },
-    {
-      username: "Tom Cook",
-      avatar: "https://via.placeholder.com/40",
-      content: "What a beautiful day! 🌞",
-      image: "https://via.placeholder.com/400x200",
-    },
-  ];
+  // const posts = [
+  //   {
+  //     username: "John Doe",
+  //     dp: "https://via.placeholder.com/40",
+  //     caption: "This is a sample post. Excited to share my thoughts here!",
+  //     image: "https://via.placeholder.com/400x200",
+  //   },
+  //   {
+  //     username: "Jane Smith",
+  //     dp: "https://via.placeholder.com/40",
+  //     caption: "Loving the new design of this platform!",
+  //     image: null,
+  //   },
+  //   {
+  //     username: "Tom Cook",
+  //     dp: "https://via.placeholder.com/40",
+  //     caption: "What a beautiful day! 🌞",
+  //     image: "https://via.placeholder.com/400x200",
+  //   },
+  // ];
 
   const handleSaveDraft = (newPost) => {
     console.log("Saved as Draft:", newPost);
@@ -41,6 +45,26 @@ const Home = () => {
       ...prev,
     ]);
   };
+
+  const [posts, setPosts] = useState([]);
+  const Navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    apiClient.get("/post/homePost").then((res) => {
+      setPosts(res.data.data.posts);
+      console.log(res.data.data.posts);
+      console.log(res);
+    }).catch((err) => {
+      console.log(err);
+
+       if(err.status === 401) {
+              console.log('Unauthorized');
+              dispatch(logout());
+              Navigate('/loginAgain');
+      } 
+    });
+  }, []);
 
 
   return (
@@ -60,13 +84,13 @@ const Home = () => {
         
         <div className="flex-1 overflow-y-auto p-6 flex justify-center">
           <div className="max-w-xl w-full">
-            {posts.map((post, index) => (
+            {posts.length!=0 && posts.map((post) => (
               <Post
-                key={index}
-                username={post.username}
-                avatar={post.avatar}
-                content={post.content}
-                image={post.image}
+                key={post._id}
+                username={post.userDetails.username}
+                dp={post.userDetails.dp}
+                caption={post.caption}
+                image={post.media[0] || null}
               />
             ))}
           </div>
