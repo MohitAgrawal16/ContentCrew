@@ -3,6 +3,7 @@ import {User} from "../models/user.model.js";
 import {ApiError} from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import jwt from "jsonwebtoken"
 
 const generateAccessAndRefereshTokens = async (userId) => {
     try {
@@ -139,7 +140,8 @@ const logoutUser = asyncHandler(async (req, res, next) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
-
+    
+   // console.log(incomingRefreshToken)
     if (!incomingRefreshToken) {
         throw new ApiError(401, "unauthorized request")
     }
@@ -149,7 +151,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             incomingRefreshToken,
             process.env.REFRESH_TOKEN_SECRET
         )
-
+        //console.log(decodedToken._id)
         const user = await User.findById(decodedToken?._id)
 
         if (!user) {
@@ -166,16 +168,16 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             secure: true
         }
 
-        const { accessToken, newRefreshToken } = await generateAccessAndRefereshTokens(user._id)
+        const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id)
 
         return res
             .status(200)
             .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", newRefreshToken, options)
+            .cookie("refreshToken", refreshToken, options)
             .json(
                 new ApiResponse(
                     200,
-                    { accessToken, refreshToken: newRefreshToken },
+                    { accessToken, refreshToken},
                     "Access token refreshed"
                 )
             )
