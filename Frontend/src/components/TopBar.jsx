@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 function TopBar({value}) {
    
@@ -18,14 +19,17 @@ function TopBar({value}) {
             <div className="relative">
               <span className="material-icons cursor-pointer">notifications</span>
             </div>
+           
+           <Link to="/profile">
             <div className="flex items-center space-x-2">
               <img
-                src={user.dp}
+                src={user.dp || "https://via.placeholder.com/150"}
                 alt="dp"
                 className="w-10 h-10 rounded-full"
               />
               <span className="text-sm font-medium">{user.username}</span>
             </div>
+           </Link> 
           </div>
         </div>
     </>
