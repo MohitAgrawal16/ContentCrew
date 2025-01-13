@@ -51,7 +51,7 @@ const Home = () => {
       {/* Main Content */}
       <div className="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col">
         {/* Top Bar */}
-         <TopBar />
+         <TopBar value="Home"/>
 
         {/* Content Area */}
         <div className="fixed top-24 right-10 z-50">

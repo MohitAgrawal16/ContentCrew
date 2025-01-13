@@ -34,7 +34,7 @@ const Workspace = () => {
       
       <div className="flex-1 bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col">
         {/* Top Bar */}
-        <TopBar />
+        <TopBar value="Workspace" />
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6">

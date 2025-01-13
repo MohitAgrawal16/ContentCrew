@@ -1,10 +1,14 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 
-function TopBar() {
+function TopBar({value}) {
+   
+  const user = useSelector((state) => state.auth.user);
+
   return (
     <>
       <div className="flex items-center justify-between bg-white px-6 py-4 shadow-md">
-          <h1 className="text-lg font-semibold">Home</h1>
+          <h1 className="text-lg font-semibold">{value}</h1>
           <div className="flex items-center space-x-4">
             <input
               type="text"
@@ -16,11 +20,11 @@ function TopBar() {
             </div>
             <div className="flex items-center space-x-2">
               <img
-                src="https://via.placeholder.com/40"
-                alt="Profile"
+                src={user.dp}
+                alt="dp"
                 className="w-10 h-10 rounded-full"
               />
-              <span className="text-sm font-medium">Tom Cook</span>
+              <span className="text-sm font-medium">{user.username}</span>
             </div>
           </div>
         </div>
