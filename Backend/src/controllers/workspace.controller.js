@@ -51,4 +51,11 @@ const getAllWorkspaces = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, { workspaces }, "All workspaces fetched successfully"))
 })
 
-export { createWorkspace, addEditor , getAllWorkspaces }
+const getEditorWorkspaces = asyncHandler(async (req, res, next) => {
+
+    const workspaces = await Workspace.find({editors:req.user._id})
+
+    return res.status(200).json(new ApiResponse(200, { workspaces }, "All workspaces fetched successfully"))
+})
+
+export { createWorkspace, addEditor , getAllWorkspaces , getEditorWorkspaces};
