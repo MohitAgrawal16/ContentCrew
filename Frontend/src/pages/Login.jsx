@@ -3,6 +3,7 @@ import {Link ,useNavigate} from 'react-router-dom';
 import {toast} from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import {login} from '../store/authSlice.js'
+import apiClient from '../utils/apiClient.js';
 
 function Login() {
 
@@ -23,36 +24,50 @@ function Login() {
     const BACKEND_URL= import.meta.env.VITE_BACKEND_URL;
     //console.log(BACKEND_URL);
 
-    fetch(`${BACKEND_URL}/user/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
+  //   fetch(`${BACKEND_URL}/user/login`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ email, password }),
+  //   })
+  //     .then((res) => {
+  //     //  console.log(res.ok);
+  //       if (!res.ok) {
+  //        return res.json().then((data) => {
+  //           throw new Error(data.message || 'Something went wrong!');
+  //         });
+  //       }
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //      // console.log(data);
+  //       if (data.error) {
+  //         toast.error(data.error);
+  //       } else {
+  //         toast.success('Login Successful');
+  //         dispatch(login(data.data.user));
+  //         navigate('/');
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       toast.error(err.message);
+  //     });
+  // };
+     
+    apiClient.post('/user/login', { email, password })
+    .then((res) => {
+      console.log(res);
+        toast.success('Login Successful');
+        dispatch(login(res.data.data.user));
+        navigate('/');
     })
-      .then((res) => {
-      //  console.log(res.ok);
-        if (!res.ok) {
-         return res.json().then((data) => {
-            throw new Error(data.message || 'Something went wrong!');
-          });
-        }
-        return res.json();
-      })
-      .then((data) => {
-       // console.log(data);
-        if (data.error) {
-          toast.error(data.error);
-        } else {
-          toast.success('Login Successful');
-          dispatch(login(data.data.user));
-          navigate('/');
-        }
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+    .catch((err) => {
+      console.log(err);
+      toast.error(err.response.data.message);
+    });
   };
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
