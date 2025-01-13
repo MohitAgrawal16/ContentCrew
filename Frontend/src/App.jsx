@@ -11,6 +11,7 @@ import WorkspaceDetails from './pages/WorkspaceDetails'
 import TaskDetails from './pages/TaskDetails'
 import PrivateRoute from './components/PrivateRoute'
 import { ToastContainer } from 'react-toastify'
+import LoginAgain from './pages/LoginAgain'
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
         <Routes>
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          <Route path='/loginAgain' element={<LoginAgain />} />
         <Route element={<PrivateRoute />} >
           <Route path='/' element={<Home />} />
           <Route path='/profile' element={<Profile />} />
