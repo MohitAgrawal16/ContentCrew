@@ -99,4 +99,52 @@ const getPostofTask = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
 })
 
-export { createPost , uploadPost , getAllPosts , getAlldraftPosts , getPostofTask }
+const getPostofHome = asyncHandler(async (req, res, next) => {
+    
+    const posts = await Post.aggregate([
+        {
+            $match: {
+                // $or: [
+                //     { by: req.user._id },
+                //     { by: { $in: req.user.following } }
+                // ]
+                // $ne:[
+                //     {status:"draft"},
+                //     {by:req.user._id}
+                // ]
+                by:{ $ne: req.user._id },
+                status:"uploaded"
+            }
+        },
+        {
+            $sort: {
+                createdAt: -1
+            }    
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "by",
+                foreignField: "_id",
+                as: "userDetails"
+            }
+        },
+        {
+            $unwind: "$userDetails"
+        },
+        {
+            $project: {
+                "userDetails.password": 0,
+                "userDetails.refreshToken": 0,
+                "userDetails.email": 0,
+            }
+        }
+    ])         
+
+    return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
+})
+
+
+
+export { createPost , uploadPost , getAllPosts , 
+    getAlldraftPosts , getPostofTask , getPostofHome }
