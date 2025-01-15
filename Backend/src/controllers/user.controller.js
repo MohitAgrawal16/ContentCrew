@@ -187,4 +187,18 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 })
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken }
+const getUsersDetails = asyncHandler(async (req, res, next) => {
+
+   console.log(req.query.userIds)
+    const users = await User.find(
+        {
+            _id: {
+                $in: req.query.userIds
+            }
+        }
+    ).select("-password -refreshToken")
+
+    return res.status(200).json(new ApiResponse(200, { users }, "All users fetched successfully"))
+})
+
+export { registerUser, loginUser, logoutUser, refreshAccessToken  , getUsersDetails};
