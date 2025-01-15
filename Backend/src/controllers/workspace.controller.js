@@ -58,4 +58,16 @@ const getEditorWorkspaces = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, { workspaces }, "All workspaces fetched successfully"))
 })
 
-export { createWorkspace, addEditor , getAllWorkspaces , getEditorWorkspaces};
+
+const getWorkspace = asyncHandler(async (req, res, next) => {
+
+    const workspace = await Workspace.findById(req.params.workspaceId)
+    
+    if (!workspace) {
+        throw new ApiError(404, "Workspace not found")
+    }
+
+    return res.status(200).json(new ApiResponse(200, { workspace }, "Workspace fetched successfully"))
+});
+
+export { createWorkspace, addEditor , getAllWorkspaces , getEditorWorkspaces , getWorkspace};
