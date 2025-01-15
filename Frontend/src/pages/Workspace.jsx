@@ -1,32 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import WorkspaceComp from '../components/WorkspaceComp';
+import NewWorkspace from '../components/NewWorkspace';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
+import apiClient from '../utils/apiClient';
+import { toast } from 'react-toastify';
 
 const Workspace = () => {
   const [activeTab, setActiveTab] = useState('your');
   
   // Sample workspace data
-  const yourWorkspaces = [
-    { id: 1, name: 'Personal', isOwner: true },
-    { id: 2, name: 'Team Alpha', isOwner: true },
-    { id: 3, name: 'Client Work', isOwner: true },
-  ];
+  // const yourWorkspaces = [
+  //   { id: 1, name: 'Personal', isOwner: true },
+  //   { id: 2, name: 'Team Alpha', isOwner: true },
+  //   { id: 3, name: 'Client Work', isOwner: true },
+  // ];
 
-  const editorWorkspaces = [
-    { id: 4, name: 'Marketing Team', isOwner: false },
-    { id: 5, name: 'Design Team', isOwner: false },
-    { id: 6, name: 'Development Team', isOwner: false },
-  ];
+  // const editorWorkspaces = [
+  //   { id: 4, name: 'Marketing Team', isOwner: false },
+  //   { id: 5, name: 'Design Team', isOwner: false },
+  //   { id: 6, name: 'Development Team', isOwner: false },
+  // ];
 
   const handleDelete = (workspaceId) => {
     console.log('Delete workspace:', workspaceId);
   };
 
-  const handleNewWorkspace = () => {
+  const handleNewWorkspace = (workspaceName) => {
     console.log('Create new workspace');
+
+    apiClient.post('/workspace', { name: workspaceName })
+    .then((res) => {
+      console.log(res);
+      //setYourWorkspaces((prev) => [res.data.data.workspace, ...prev]);
+      window.location.reload();
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.error(err.response.data.message);
+    });
   };
+
+  const [yourWorkspaces, setYourWorkspaces] = useState([]);
+  const [editorWorkspaces, setEditorWorkspaces] = useState([]);
+
+  useEffect(() => {
+    // Fetch your workspaces
+    apiClient.get('/workspace').then((res) => {
+      setYourWorkspaces(res.data.data.workspaces);
+    })
+    .catch((err) => {
+      console.log(err);
+      //toast.error(err.response.data.message);
+    });
+
+    // Fetch editor workspaces
+    apiClient.get('/workspace/editor').then((res) => {
+      setEditorWorkspaces(res.data.data.workspaces);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }, []);
 
   return (
     <div className="flex h-screen">
@@ -65,13 +101,14 @@ const Workspace = () => {
               </div>
               
               {activeTab === 'your' && (
-                <button 
-                  onClick={handleNewWorkspace}
-                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  <span className="material-icons mr-2">add</span>
-                  New Workspace
-                </button>
+                // <button 
+                //   onClick={handleNewWorkspace}
+                //   className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                // >
+                //   <span className="material-icons mr-2">add</span>
+                //   New Workspace
+                // </button>
+                <NewWorkspace  onCreate={handleNewWorkspace}/>
               )}
             </div>
 
@@ -79,9 +116,10 @@ const Workspace = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {(activeTab === 'your' ? yourWorkspaces : editorWorkspaces).map((workspace) => (
                 <WorkspaceComp
-                  id={workspace.id}
+                  key={workspace._id}
+                  id={workspace._id}
                   name={workspace.name}
-                  isOwner={workspace.isOwner}
+                  isOwner={activeTab === 'your' ? true : false} 
                   onDelete={() => handleDelete(workspace.id)}
                 />
               ))}

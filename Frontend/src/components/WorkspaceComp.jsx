@@ -39,7 +39,11 @@ const WorkspaceComp = ({id,name, isOwner, onDelete }) => {
           </button> */}
           {isOwner && (
             <button 
-              onClick={onDelete}
+              onClick={
+                (e) => {
+                  e.stopPropagation();
+                  onDelete();
+              }}
               className="p-2 hover:bg-red-50 rounded-full transition-colors"
               aria-label="Delete workspace"
             >
