@@ -1,17 +1,101 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Task from "../components/Task";
 import AddnewTask from "../components/AddnewTask";
+import { useParams } from "react-router-dom";
+import apiClient from "../utils/apiClient";
+import { useSelector } from "react-redux";
 
-const WorkspaceDetails = ({ userRole }) => {
-  const [tasks, setTasks] = useState([
-    { id: 1, name: "Task 1", status: "todo" },
-    { id: 2, name: "Task 2", status: "in-progress" },
-  ]);
-  const [editors, setEditors] = useState(["John Doe", "Jane Smith"]);
+const WorkspaceDetails = () => {
+  
+  const { workspaceId } = useParams();
+  const [workspace, setWorkspace] = useState({});
+  const [userRole, setUserRole] = useState("");
+  const user = useSelector((state) => state.auth.user);
+  const [loading , setLoading] = useState(true);
+  const [editors, setEditors] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  
+  useEffect(() => {
+
+    apiClient.get(`/workspace/${workspaceId}`)
+    .then((response) => {
+      //console.log(response.data.data.workspace);
+      setWorkspace(response.data.data.workspace[0]);
+      setEditors(response.data.data.workspace[0].editors);
+      setTasks(response.data.data.workspace[0].tasks);
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+
+  }, [workspaceId]);
+
+  useEffect(() => {
+
+    if(workspace.owner === user._id) {
+      setUserRole("owner");
+    }else {
+      setUserRole("editor");
+    }
+
+  }, [workspace]);
+
+
+  // useEffect(() => {
+  
+  //   apiClient.get(`/workspace/${workspaceId}`)
+  //   .then((response) => {
+  //     //console.log(response.data.data.workspace);
+  //     setWorkspace(response.data.data.workspace);
+  //    // console.log(workspace)
+  //   //  console.log(workspace.editors)
+  //     //setLoading(false);
+
+     
+      
+  //     // return apiClient.get('/user/UsersDetails' ,{
+  //     //   userIds:workspace.editors
+  //     // })
+  //   })
+  //   // .then((response) => {
+  //   //   console.log(response.data);
+  //   //   //setEditors(response.data.data.users.map((user) => user.name));
+  //   //   setLoading(false);
+  //   // })
+  //   .catch((error) => {
+  //     console.error("Error:", error);
+  //   });
+
+  // }, []);
+
+  // useEffect(() => {
+    
+  //   if(workspace.owner === user._id) {
+  //     setUserRole("owner");
+  //   }else {
+  //     setUserRole("editor");
+  //   }
+
+  //   apiClient.get('/user/UsersDetails/' ,{
+  //         params:{
+  //           userIds:workspace.editors
+  //         }
+  //     })
+  //     .then((response) => {
+  //       setEditors(response.data.data.users.map((user) => user.username));
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error:", error);
+  //     });
+  // }, [workspace]);
+ 
   const [newTask, setNewTask] = useState("");
   const [isAddingEditor, setIsAddingEditor] = useState(false);
   const [newEditor, setNewEditor] = useState("");
+  
 
   const addTask = () => {
     if (newTask.trim() === "") return;
@@ -47,6 +131,15 @@ const WorkspaceDetails = ({ userRole }) => {
     console.log("New Task Added:", newTask);
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse">Loading workspace details...</div>
+      </div>
+    );
+  }
+
+
   return (
     <div className="flex h-screen">
       {/* Fixed Sidebar */}
@@ -58,15 +151,15 @@ const WorkspaceDetails = ({ userRole }) => {
       <div className="flex-1 ml-64 overflow-y-auto p-6 bg-gray-100">
         <h2 className="text-2xl font-bold mb-4">Workspace Details</h2>
         <div className="bg-white shadow-md rounded-md p-6 mb-6">
-          <p className="text-lg font-semibold">Project Alpha</p>
+          <p className="text-lg font-semibold">{workspace.name}</p>
           <p className="text-md text-gray-600 mb-4">Editors:</p>
           <ul className="mb-4">
-            {editors.map((editor, index) => (
+            {editors!=null && editors.map((editor) => (
               <li
-                key={index}
+                key={editor._id}
                 className="flex justify-between items-center py-2 border-b border-gray-200"
               >
-                <span>{editor}</span>
+                <span>{editor.username}</span>
                 {userRole === "owner" && (
                   <button
                     className="text-red-500 hover:text-red-700"
@@ -120,9 +213,9 @@ const WorkspaceDetails = ({ userRole }) => {
         <div>
           <h3 className="text-lg font-semibold mb-4 mt-4">Tasks</h3>
           <div className="flex flex-col gap-4">
-            {tasks.map((task) => (
+            {tasks!=null && tasks.map((task) => (
               <Task
-                key={task.id}
+                key={task._id}
                 task={task}
                 userRole={userRole}
                 markTaskAsDone={markTaskAsDone}

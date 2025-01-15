@@ -14,7 +14,7 @@ const Task = ({ task, userRole, markTaskAsDone, deleteTask }) => {
       onClick={handleTaskClick}
     >
       <div>
-        <p className="text-lg font-semibold">{task.name}</p>
+        <p className="text-lg font-semibold">{task.title}</p>
         <p className="text-sm text-gray-500">Status: {task.status}</p>
       </div>
       {userRole === "owner" && (
