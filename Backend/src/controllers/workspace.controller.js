@@ -2,6 +2,8 @@ import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Workspace } from "../models/workspace.model.js";
+import mongoose from "mongoose";
+import { ObjectId } from "mongodb";
 
 const createWorkspace = asyncHandler(async (req, res, next) => {
     const { name } = req.body
@@ -70,4 +72,57 @@ const getWorkspace = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, { workspace }, "Workspace fetched successfully"))
 });
 
-export { createWorkspace, addEditor , getAllWorkspaces , getEditorWorkspaces , getWorkspace};
+const getWorkspaceDetails = asyncHandler(async (req, res, next) => {
+    
+    //console.log(req.params.workspaceId)
+
+    const workspace = await Workspace.aggregate([
+        {
+            $match: {
+                _id:new ObjectId(req.params.workspaceId)
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "editors",
+                foreignField: "_id",
+                as: "editors"
+            }
+        },
+        {
+            $lookup:{
+                from: "tasks",
+                localField: "_id",
+                foreignField: "workspace",
+                as: "tasks"
+            }
+        },
+        {
+            $project: {
+                "editors.password": 0,
+                "editors.refreshToken": 0,
+                "editors.__v": 0,
+                "editors.createdAt": 0,
+                "editors.updatedAt": 0,
+                "editors.refreshToken": 0,
+                "tasks.workspace": 0,
+                "tasks.media": 0,
+                "tasks.suggestions": 0,
+                "tasks.createdAt": 0,
+                "tasks.updatedAt": 0,
+                "tasks.__v": 0,
+                "tasks.description": 0
+            }
+        }
+    ])
+    
+    if (!workspace) {
+        throw new ApiError(404, "Workspace not found")
+    }
+
+    return res.status(200).json(new ApiResponse(200, { workspace }, "Workspace fetched successfully"))
+});
+
+export { createWorkspace, addEditor , getAllWorkspaces
+     , getEditorWorkspaces , getWorkspace , getWorkspaceDetails};
