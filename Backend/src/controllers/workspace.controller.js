@@ -46,7 +46,7 @@ const addEditor = asyncHandler(async (req, res, next) => {
 
 const getAllWorkspaces = asyncHandler(async (req, res, next) => {
 
-    const workspaces = await Workspace.find({owner:req.user._id})
+    const workspaces = await Workspace.find({owner:req.user._id}).sort({createdAt:-1})
 
     return res.status(200).json(new ApiResponse(200, { workspaces }, "All workspaces fetched successfully"))
 })
