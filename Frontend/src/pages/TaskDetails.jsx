@@ -1,7 +1,51 @@
 import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
+import { useParams } from "react-router-dom";
+import apiClient from "../utils/apiClient";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
-const TaskDetails = ({ userRole, task }) => {
+const TaskDetails = () => {
+
+  const {workspaceId, taskId} = useParams();
+  const [task, setTask] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState("");
+  const user = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+
+    apiClient.get(`/task/${taskId}`)
+    .then((response) => {
+      
+     // console.log(response.data);
+     // console.log("hii");
+      //console.log(response.data.data.task[0]);
+      setTask(response.data.data.task[0]);
+
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+  }, []);
+
+  useEffect(() => {
+    
+  if(task){
+    if(task.owner === user._id) {
+      setUserRole("owner");
+    }else {
+      setUserRole("editor");
+    }
+
+    console.log(task);
+    console.log(task.media.length);
+
+    setLoading(false);
+  } 
+
+  }, [task]);
+
   const [post, setPost] = useState(null); // Holds the post data created by the editor
   const [caption, setCaption] = useState(""); // Editor input for caption
   const [images, setImages] = useState([]); // Array of uploaded image URLs
@@ -35,6 +79,14 @@ const TaskDetails = ({ userRole, task }) => {
   const handleRemoveImage = (index) => {
     setImages(images.filter((_, i) => i !== index));
   };
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-pulse">Loading task details...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen">
@@ -47,10 +99,13 @@ const TaskDetails = ({ userRole, task }) => {
           {/* Task Details */}
           <h1 className="text-3xl font-bold mb-4">{task.title}</h1>
           <p className="text-lg text-gray-700 mb-6">{task.description}</p>
+
+          {task!=null && task.media.length!=0 && (
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-2">Media Files:</h2>
             <div className="grid grid-cols-3 gap-4">
-              {task.mediaFiles.map((file, index) => (
+
+              {task!=null && task?.media?.length!=0 && task.media.map((file, index) => (
                 <div key={index} className="relative group">
                   <img
                     src={file}
@@ -67,9 +122,11 @@ const TaskDetails = ({ userRole, task }) => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> )}
 
           {/* Post Section */}
+
+          
           <div className="bg-gray-100 p-4 rounded-md">
             <h2 className="text-xl font-semibold mb-4">Post Section</h2>
 
