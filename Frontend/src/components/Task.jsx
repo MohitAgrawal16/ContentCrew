@@ -1,11 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const Task = ({ task, userRole, markTaskAsDone, deleteTask }) => {
+const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
+  
+  
   const navigate = useNavigate();
 
   const handleTaskClick = () => {
-    navigate(`/tasks/${task.id}`);
+    navigate(`/workspace/${workspaceId}/task/${task._id}`);
   };
 
   return (
@@ -23,7 +25,7 @@ const Task = ({ task, userRole, markTaskAsDone, deleteTask }) => {
             className="text-green-500 hover:text-green-700"
             onClick={(e) => {
               e.stopPropagation(); // Prevent click propagation
-              markTaskAsDone(task.id);
+              markTaskAsDone(task._id);
             }}
             title="Mark as Done"
           >
@@ -33,7 +35,7 @@ const Task = ({ task, userRole, markTaskAsDone, deleteTask }) => {
             className="text-red-500 hover:text-red-700"
             onClick={(e) => {
               e.stopPropagation(); // Prevent click propagation
-              deleteTask(task.id);
+              deleteTask(task._id);
             }}
             title="Delete Task"
           >

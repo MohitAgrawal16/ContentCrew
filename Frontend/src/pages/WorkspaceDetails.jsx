@@ -217,6 +217,7 @@ const WorkspaceDetails = () => {
               <Task
                 key={task._id}
                 task={task}
+                workspaceId={workspaceId}
                 userRole={userRole}
                 markTaskAsDone={markTaskAsDone}
                 deleteTask={deleteTask}

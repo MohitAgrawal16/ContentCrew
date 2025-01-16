@@ -19,17 +19,6 @@ function App() {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   
-  const sampleTask = {
-    title: "Task 1",
-    description: "This is a description of Task 1.",
-    mediaFiles: [
-      "https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      "https://via.placeholder.com/150",
-      "https://via.placeholder.com/150",
-    ],
-  };
-  
-
   return (
     <>
       <Router>
@@ -43,7 +32,7 @@ function App() {
           <Route path='/profile' element={<Profile />} />
           <Route path='/workspace' element={<Workspace />} />
           <Route path='/workspace/:workspaceId' element={<WorkspaceDetails />} />
-          <Route path='/tasks/:taskId' element={<TaskDetails userRole="editor" task={sampleTask}/>} />
+          <Route path='/workspace/:workspaceId/task/:taskId' element={<TaskDetails />} />
         </Route>
         
         </Routes>
