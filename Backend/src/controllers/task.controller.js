@@ -3,6 +3,7 @@ import {ApiError} from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import {Task} from "../models/task.model.js"
+import { ObjectId } from "mongodb";
 
 const createTask = asyncHandler(async (req, res, next) => {
     const { title, description, workspaceId } = req.body
@@ -39,4 +40,36 @@ const getAllTasks = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, { tasks }, "All tasks fetched successfully"))
 })
 
-export { createTask , getAllTasks }
+const getTaskDetails = asyncHandler(async (req, res, next) => {
+    
+    const task = await Task.aggregate([
+        {
+            $match: {
+                _id: new ObjectId(req.params.taskId)
+            }
+        },
+        {
+            $lookup: {
+                from: "workspaces",
+                localField: "workspace",
+                foreignField: "_id",
+                as: "workspace"
+            }
+        },
+        {
+            $unwind: "$workspace"
+        },
+        {
+            $project:{
+                "workspace.editors": 0,
+                "workspace.__v": 0,
+                "workspace.createdAt": 0,
+                "workspace.updatedAt": 0
+            }
+        }
+    ])
+
+    return res.status(200).json(new ApiResponse(200, { task }, "Task fetched successfully"))
+})
+
+export { createTask , getAllTasks , getTaskDetails}
