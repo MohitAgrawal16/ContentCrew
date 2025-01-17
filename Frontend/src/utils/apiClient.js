@@ -1,8 +1,8 @@
 import axios from "axios";
 //import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-
-//const navigate = useNavigate();
+import { useDispatch } from "react-redux";
+import { logout } from "../store/authSlice";
 
 // Create an Axios instance
 const apiClient = axios.create({
@@ -56,6 +56,21 @@ const apiClient = axios.create({
 //      // }
 //     }
 
+//     return Promise.reject(error);
+//   }
+// );
+
+// apiClient.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     console.log(error);
+//     const dispatch = useDispatch();
+//     const Navigate = useNavigate();
+//     if (error.response?.status === 401) {
+//       console.log("Unauthorized");
+//       dispatch(logout());
+//       Navigate("/loginAgain");
+//     }
 //     return Promise.reject(error);
 //   }
 // );
