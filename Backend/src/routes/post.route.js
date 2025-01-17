@@ -14,7 +14,7 @@ postRouter.route("/").post(upload.fields([
     {name: "media", maxCount: 10},
 ]),checkOwner,createPost);
 
-postRouter.route("/uploadPost").patch(uploadPost)
+postRouter.route("/uploadPost/:postId").patch(uploadPost)
 
 // route for getting all the posts which are uploaded by the user
 postRouter.route("/").get(getAllPosts);

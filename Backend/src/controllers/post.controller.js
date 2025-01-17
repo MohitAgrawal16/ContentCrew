@@ -56,7 +56,7 @@ const createPost = asyncHandler(async (req, res, next) => {
 // not sure
 
 const uploadPost = asyncHandler(async (req, res, next) => {
-    const { postId } = req.body
+    const { postId } = req.params
    // console.log(postId);
     const post = await Post.findById(postId)
 
@@ -78,8 +78,9 @@ const uploadPost = asyncHandler(async (req, res, next) => {
 const getAllPosts = asyncHandler(async (req, res, next) => {
       
     const posts = await Post.find(
-        { $and:[{status:"uploaded"},{by:req.user._id}] }  
-    )
+        { $and:[{status:"uploaded"},{by:req.user._id}] }
+    ).sort({createdAt:-1})
+    
     return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
 })
 
@@ -87,16 +88,17 @@ const getAlldraftPosts = asyncHandler(async (req, res, next) => {
         
         const posts = await Post.find(
             { $and:[{status:"draft"},{by:req.user._id},{taskId:null}] }  
-        )
+        ).sort({createdAt:-1})
+
         return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
 })
 
 const getPostofTask = asyncHandler(async (req, res, next) => {
     const { taskId } = req.params
 
-    const posts = await Post.find({ taskId })
+    const post = await Post.find({ taskId })
 
-    return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
+    return res.status(200).json(new ApiResponse(200, { post }, "All posts fetched successfully"))
 })
 
 const getPostofHome = asyncHandler(async (req, res, next) => {
