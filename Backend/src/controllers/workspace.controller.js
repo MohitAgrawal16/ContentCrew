@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Workspace } from "../models/workspace.model.js";
 import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
+import { User } from "../models/user.model.js";
 
 const createWorkspace = asyncHandler(async (req, res, next) => {
     const { name } = req.body
@@ -21,24 +22,30 @@ const createWorkspace = asyncHandler(async (req, res, next) => {
 })
 
 const addEditor = asyncHandler(async (req, res, next) => {
-    const { editorId } = req.body
-    //console.log("here")
-  //  console.log(req.params.workspaceId)
-    const workspace = await Workspace.findById(req.params.workspaceId)
+    
+    const {username , workspaceId} = req.params
+  
+    const workspace = await Workspace.findById(workspaceId)
 
     if (!workspace) {
         throw new ApiError(404, "Workspace not found")
     }
     
-    if (workspace.owner===req.user._id) {
-        throw new ApiError(403, "You can't add yourself as editor")
+    const editor = await User.findOne({username})
+
+    if(!editor){
+        throw new ApiError(404, "Editor not found")
     }
 
-    if (workspace.editors.includes(editorId)) {
+    if(workspace.owner.equals(editor._id)){
+        throw new ApiError(400, "You can't add yourself as editor")
+    }
+
+    if (workspace.editors.includes(editor._id)) {
         throw new ApiError(400, "Editor already exists in this workspace")
     }
     
-    workspace.editors.push(editorId)
+    workspace.editors.push(editor._id)
     
     // console.log(workspace.editors)
     await workspace.save()

@@ -9,7 +9,7 @@ const workspaceRouter = Router();
 workspaceRouter.use(verifyJWT);
 
 workspaceRouter.route("/").post(createWorkspace);
-workspaceRouter.route("/:workspaceId/editor").post(addEditor);
+workspaceRouter.route("/:workspaceId/:username").post(addEditor);
 
 // route for getting workspaces
 workspaceRouter.route("/").get(getAllWorkspaces);
