@@ -80,7 +80,7 @@ const getAllPosts = asyncHandler(async (req, res, next) => {
     const posts = await Post.find(
         { $and:[{status:"uploaded"},{by:req.user._id}] }
     ).sort({createdAt:-1})
-    
+
     return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
 })
 
@@ -147,6 +147,39 @@ const getPostofHome = asyncHandler(async (req, res, next) => {
 })
 
 
+const editPost = asyncHandler(async (req, res, next) => {
+    const { postId } = req.params
+    const { caption } = req.body
+
+    const post = await Post.findById(postId)
+
+    if (!post) {
+        throw new ApiError(404, "Post not found")
+    }
+    const mediaLocalPaths = req.files?.media?.map(temp => temp.path)
+  
+    if(mediaLocalPaths==null){
+        throw new ApiError(400, "Please provide media files")
+    }
+
+    let media = await Promise.all(mediaLocalPaths.map(async (path) => {
+        return await uploadOnCloudinary(path)
+    }))
+    
+    if (media.includes(null)) {
+        throw new ApiError(500, "Post creation failed")
+    }
+
+    media = media.map(file => file.url);
+    
+    post.caption = caption
+    post.media = media
+    
+    await post.save()
+
+    return res.status(200).json(new ApiResponse(200, { post }, "Post edited successfully"))
+})
+
 
 export { createPost , uploadPost , getAllPosts , 
-    getAlldraftPosts , getPostofTask , getPostofHome }
+    getAlldraftPosts , getPostofTask , getPostofHome , editPost}

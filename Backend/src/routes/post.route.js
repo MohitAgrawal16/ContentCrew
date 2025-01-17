@@ -2,7 +2,8 @@ import { Router } from "express";
 import {upload} from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { createPost, uploadPost ,getAllPosts, 
-    getAlldraftPosts ,getPostofTask, getPostofHome} from "../controllers/post.controller.js";
+    getAlldraftPosts ,getPostofTask, getPostofHome,
+    editPost} from "../controllers/post.controller.js";
 import { checkOwner } from "../middlewares/postFor.middleware.js";
 
 
@@ -25,5 +26,9 @@ postRouter.route("/homePost").get(getPostofHome);
 
 // get post corresponding to a taskId
 postRouter.route("/:taskId").get(getPostofTask);
+
+postRouter.route("/:postId").patch(upload.fields([
+    {name: "media", maxCount: 10},
+]) ,editPost);
 
 export { postRouter };
