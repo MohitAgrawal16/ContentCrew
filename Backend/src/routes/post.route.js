@@ -3,7 +3,7 @@ import {upload} from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { createPost, uploadPost ,getAllPosts, 
     getAlldraftPosts ,getPostofTask, getPostofHome,
-    editPost} from "../controllers/post.controller.js";
+    editPost ,  createAndUploadPost} from "../controllers/post.controller.js";
 import { checkOwner } from "../middlewares/postFor.middleware.js";
 
 
@@ -14,6 +14,10 @@ postRouter.use(verifyJWT);
 postRouter.route("/").post(upload.fields([
     {name: "media", maxCount: 10},
 ]),checkOwner,createPost);
+
+postRouter.route("/uploadPost").post(upload.fields([
+    {name: "media", maxCount: 10},
+]),createAndUploadPost);
 
 postRouter.route("/uploadPost/:postId").patch(uploadPost)
 

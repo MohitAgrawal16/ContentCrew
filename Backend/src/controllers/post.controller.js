@@ -51,9 +51,41 @@ const createPost = asyncHandler(async (req, res, next) => {
     return res.status(201).json(new ApiResponse(201, { post }, "Post created successfully"))
 })
 
+const createAndUploadPost = asyncHandler(async (req, res, next) => {
+    const { caption } = req.body
 
-// can write a createPostofWorkspace function to create a post in a workspace
-// not sure
+    const mediaLocalPaths = req.files?.media?.map(temp => temp.path)
+    // console.log(mediaLocalPaths);
+    
+    if(mediaLocalPaths==null){
+        throw new ApiError(400, "Please provide media files")
+    }
+
+    let media = await Promise.all(mediaLocalPaths.map(async (path) => {
+        return await uploadOnCloudinary(path)
+    }))
+    
+    if (media.includes(null)) {
+        throw new ApiError(500, "Post creation failed")
+    }
+
+    media = media.map(file => file.url);
+    
+    let by=req.user._id;
+
+    const post = await Post.create({
+        caption,
+        media,
+        by,
+        status:"uploaded",
+    })  
+
+    if (!post) {
+        throw new ApiError(500, "Post creation failed")
+    } 
+
+    return res.status(201).json(new ApiResponse(201, { post }, "Post created successfully"))
+})
 
 const uploadPost = asyncHandler(async (req, res, next) => {
     const { postId } = req.params
@@ -182,4 +214,4 @@ const editPost = asyncHandler(async (req, res, next) => {
 
 
 export { createPost , uploadPost , getAllPosts , 
-    getAlldraftPosts , getPostofTask , getPostofHome , editPost}
+    getAlldraftPosts , getPostofTask , getPostofHome , editPost , createAndUploadPost};
