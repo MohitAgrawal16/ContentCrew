@@ -4,11 +4,18 @@ const NewPost = ({ handleSaveDraft, handlePost }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [caption, setCaption] = useState("");
   const [images, setImages] = useState([]);
+  const [media, setMedia] = useState([]);
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
+    setMedia(() => [...media, ...files]);
     const imageUrls = files.map((file) => URL.createObjectURL(file));
     setImages((prev) => [...prev, ...imageUrls]);
+  };
+
+  const handleRemoveImage = (index) => {
+    setImages(images.filter((_, i) => i !== index));
+    setMedia(media.filter((_, i) => i !== index));
   };
 
   const handleSave = () => {
@@ -19,10 +26,12 @@ const NewPost = ({ handleSaveDraft, handlePost }) => {
   };
 
   const handlePostSubmit = () => {
-    handlePost({ caption, images });
+    handlePost({ caption, media });
+    //console.log(media);
     setIsOpen(false);
     setCaption("");
     setImages([]);
+    setMedia([]);
   };
 
   return (
@@ -55,6 +64,9 @@ const NewPost = ({ handleSaveDraft, handlePost }) => {
             ></textarea>
 
             {/* Image Upload */}
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+                Upload Images:
+            </label>
             <input
               type="file"
               accept="image/*"
@@ -65,12 +77,20 @@ const NewPost = ({ handleSaveDraft, handlePost }) => {
             {images.length > 0 && (
               <div className="flex overflow-x-scroll space-x-2 mb-4">
                 {images.map((img, index) => (
-                  <img
-                    key={index}
-                    src={img}
-                    alt={`Preview ${index + 1}`}
-                    className="w-24 h-24 object-cover rounded-md"
-                  />
+                  <div key={index} className="relative">
+                    <img
+                      key={index}
+                      src={img}
+                      alt={`Preview ${index + 1}`}
+                      className="w-24 h-24 object-cover rounded-md"
+                    />
+                    <button
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-1 right-1 bg-red-300 hover:bg-red-400 text-white text-xs p-0.5  rounded-full"
+                    > 
+                     ✕
+                    </button>
+                  </div>
                 ))}
               </div>
             )}

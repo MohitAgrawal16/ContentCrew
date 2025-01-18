@@ -7,44 +7,9 @@ import apiClient from "../utils/apiClient";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../store/authSlice";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 const Home = () => {
-  // const posts = [
-  //   {
-  //     username: "John Doe",
-  //     dp: "https://via.placeholder.com/40",
-  //     caption: "This is a sample post. Excited to share my thoughts here!",
-  //     image: "https://via.placeholder.com/400x200",
-  //   },
-  //   {
-  //     username: "Jane Smith",
-  //     dp: "https://via.placeholder.com/40",
-  //     caption: "Loving the new design of this platform!",
-  //     image: null,
-  //   },
-  //   {
-  //     username: "Tom Cook",
-  //     dp: "https://via.placeholder.com/40",
-  //     caption: "What a beautiful day! 🌞",
-  //     image: "https://via.placeholder.com/400x200",
-  //   },
-  // ];
-
-  const handleSaveDraft = (newPost) => {
-    console.log("Saved as Draft:", newPost);
-  };
-
-  const handlePost = (newPost) => {
-    setPosts((prev) => [
-      {
-        username: "You",
-        avatar: "https://via.placeholder.com/40",
-        content: newPost.caption,
-        image: newPost.images[0] || null,
-      },
-      ...prev,
-    ]);
-  };
 
   const [posts, setPosts] = useState([]);
   const Navigate = useNavigate();
@@ -53,8 +18,8 @@ const Home = () => {
   useEffect(() => {
     apiClient.get("/post/homePost").then((res) => {
       setPosts(res.data.data.posts);
-      console.log(res.data.data.posts);
-      console.log(res);
+      //console.log(res.data.data.posts);
+      //console.log(res);
     }).catch((err) => {
       console.log(err);
 
@@ -65,6 +30,30 @@ const Home = () => {
       } 
     });
   }, []);
+
+  const handleSaveDraft = (newPost) => {
+    console.log("Saved as Draft:", newPost);
+  };
+
+  const handlePost = (newPost) => {
+    
+    const formData = new FormData();
+    console.log(newPost);
+    newPost.media.forEach((file) => {
+      formData.append("media", file);
+    });
+    formData.append("caption", newPost.caption);
+
+    apiClient.post("/post/uploadPost", formData)
+    .then((res) => {
+      console.log(res.data);
+      toast.success(res.data.message);
+    }).catch((err) => {
+      console.log(err);
+      toast.error(err.response.data.message);
+    }
+    );
+  };
 
 
   return (
