@@ -5,6 +5,7 @@ import AddnewTask from "../components/AddnewTask";
 import { useParams } from "react-router-dom";
 import apiClient from "../utils/apiClient";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const WorkspaceDetails = () => {
   
@@ -92,15 +93,35 @@ const WorkspaceDetails = () => {
   //     });
   // }, [workspace]);
  
-  const [newTask, setNewTask] = useState("");
   const [isAddingEditor, setIsAddingEditor] = useState(false);
   const [newEditor, setNewEditor] = useState("");
   
+  const deleteEditor = (editor) => {
+    setEditors(editors.filter((e) => e !== editor));
+  };
 
-  const addTask = () => {
-    if (newTask.trim() === "") return;
-    setTasks([...tasks, { id: Date.now(), name: newTask, status: "todo" }]);
-    setNewTask("");
+  const handleAddEditor = () => {
+
+    if (newEditor.trim() === ""){
+      toast.error("Editor's username cannot be empty");
+      return;
+    }
+
+    setLoading(true);
+
+    apiClient.post(`/workspace/${workspaceId}/${newEditor}`)
+    .then((response) => {
+      //console.log(response.data);
+      // setEditors([...editors, newEditor]);
+      // setNewEditor("");
+      window.location.reload();
+      setIsAddingEditor(false);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      toast.error(error.response.data.message);
+      setLoading(false);
+    });
   };
 
   const markTaskAsDone = (taskId) => {
@@ -115,20 +136,31 @@ const WorkspaceDetails = () => {
     setTasks(tasks.filter((task) => task.id !== taskId));
   };
 
-  const deleteEditor = (editor) => {
-    setEditors(editors.filter((e) => e !== editor));
-  };
-
-  const handleAddEditor = () => {
-    if (newEditor.trim() !== "") {
-      setEditors([...editors, newEditor]);
-      setNewEditor("");
-      setIsAddingEditor(false);
-    }
-  };
-
   const handleAddTask = (newTask) => {
     console.log("New Task Added:", newTask);
+    setLoading(true);
+
+    const formData = new FormData();
+
+    formData.append("title", newTask.title);
+    formData.append("description", newTask.description);
+    formData.append("workspaceId", workspaceId);
+
+    newTask.media.forEach((file) => {
+      formData.append("media", file);
+    });
+
+    apiClient.post(`/task`, formData)
+    .then((response) => {
+      console.log(response.data);
+      
+      window.location.reload();
+      //setTasks([response.data.data.task, ...tasks]);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      setLoading(false);
+    });
   };
 
   if (loading) {
@@ -185,20 +217,20 @@ const WorkspaceDetails = () => {
                 <div className="mt-4">
                   <input
                     type="text"
-                    placeholder="Enter editor's name"
+                    placeholder="Enter editor's username"
                     value={newEditor}
                     onChange={(e) => setNewEditor(e.target.value)}
                     className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
                     onClick={handleAddEditor}
-                    className="ml-2 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                    className="ml-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                   >
                     Add
                   </button>
                   <button
                     onClick={() => setIsAddingEditor(false)}
-                    className="ml-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                    className="ml-2 bg-blue-200 text-white px-4 py-2 rounded-md hover:bg-blue-300"
                   >
                     Cancel
                   </button>

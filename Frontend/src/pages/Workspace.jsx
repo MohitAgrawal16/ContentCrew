@@ -10,19 +10,6 @@ import { toast } from 'react-toastify';
 const Workspace = () => {
   const [activeTab, setActiveTab] = useState('your');
   
-  // Sample workspace data
-  // const yourWorkspaces = [
-  //   { id: 1, name: 'Personal', isOwner: true },
-  //   { id: 2, name: 'Team Alpha', isOwner: true },
-  //   { id: 3, name: 'Client Work', isOwner: true },
-  // ];
-
-  // const editorWorkspaces = [
-  //   { id: 4, name: 'Marketing Team', isOwner: false },
-  //   { id: 5, name: 'Design Team', isOwner: false },
-  //   { id: 6, name: 'Development Team', isOwner: false },
-  // ];
-
   const handleDelete = (workspaceId) => {
     console.log('Delete workspace:', workspaceId);
   };

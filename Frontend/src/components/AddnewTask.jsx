@@ -1,28 +1,32 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
-const AddnewTask = ({ onAddTask }) => {
+const AddnewTask = ({ handleAddTask }) => {
   
-    const [isOpen, setIsOpen] = useState(false); // Controls modal visibility
-  const [title, setTitle] = useState(""); // Task title
-  const [description, setDescription] = useState(""); // Task description
-  const [images, setImages] = useState([]); // Uploaded images
+  const [isOpen, setIsOpen] = useState(false); 
+  const [title, setTitle] = useState(""); 
+  const [description, setDescription] = useState("");
+  const [images, setImages] = useState([]);
+  const [media , setMedia] = useState([]);
 
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
+    setMedia(() => [...media, ...files]);
     const newImages = files.map((file) => URL.createObjectURL(file));
     setImages((prevImages) => [...prevImages, ...newImages]);
   };
 
   const handleRemoveImage = (index) => {
     setImages(images.filter((_, i) => i !== index));
+    setMedia(media.filter((_, i) => i !== index));
   };
 
   const handleDone = () => {
     if (title.trim() === "" || description.trim() === "") {
-      alert("Title and Description are required.");
+      toast.error("Title and Description are required.");
       return;
     }
-    onAddTask({ title, description, images });
+    handleAddTask({ title, description, media });
     setIsOpen(false); // Close modal
     setTitle("");
     setDescription("");
