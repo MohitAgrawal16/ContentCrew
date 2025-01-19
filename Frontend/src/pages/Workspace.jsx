@@ -10,10 +10,6 @@ import { toast } from 'react-toastify';
 const Workspace = () => {
   const [activeTab, setActiveTab] = useState('your');
   
-  const handleDelete = (workspaceId) => {
-    console.log('Delete workspace:', workspaceId);
-  };
-
   const handleNewWorkspace = (workspaceName) => {
     console.log('Create new workspace');
 
@@ -21,12 +17,31 @@ const Workspace = () => {
     .then((res) => {
       console.log(res);
       //setYourWorkspaces((prev) => [res.data.data.workspace, ...prev]);
+      toast.success(res.data.message);
       window.location.reload();
     })
     .catch((err) => {
       console.log(err);
       toast.error(err.response.data.message);
     });
+  };
+
+  const handleDelete = (workspaceId) => {
+    console.log('Delete workspace', workspaceId);
+
+    apiClient.delete(`/workspace/${workspaceId}`)
+    .then((res) => {
+      console.log(res);
+      //setYourWorkspaces((prev) => prev.filter((workspace) => workspace._id !== workspaceId));
+      toast.success(res.data.message);
+      window.location.reload();
+      
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.error(err.response.data.message);
+    });
+
   };
 
   const [yourWorkspaces, setYourWorkspaces] = useState([]);
@@ -51,6 +66,7 @@ const Workspace = () => {
     });
   }, []);
 
+    
   return (
     <div className="flex h-screen">
       <Sidebar />
@@ -107,7 +123,7 @@ const Workspace = () => {
                   id={workspace._id}
                   name={workspace.name}
                   isOwner={activeTab === 'your' ? true : false} 
-                  onDelete={() => handleDelete(workspace.id)}
+                  onDelete={() => handleDelete(workspace._id)}
                 />
               ))}
             </div>

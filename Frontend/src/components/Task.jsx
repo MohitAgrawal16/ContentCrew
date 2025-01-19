@@ -32,7 +32,7 @@ const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
             <span className="material-icons">check_circle</span>
           </button>
           <button
-            className="text-red-500 hover:text-red-700"
+            className="text-blue-200 hover:text-blue-300"
             onClick={(e) => {
               e.stopPropagation(); // Prevent click propagation
               deleteTask(task._id);

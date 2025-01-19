@@ -194,7 +194,7 @@ const WorkspaceDetails = () => {
                 <span>{editor.username}</span>
                 {userRole === "owner" && (
                   <button
-                    className="text-red-500 hover:text-red-700"
+                    className="text-blue-200 hover:text-blue-300"
                     onClick={() => deleteEditor(editor)}
                     title="Delete Editor"
                   >
