@@ -2,6 +2,9 @@ import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Workspace } from "../models/workspace.model.js";
+import { Task } from "../models/task.model.js";
+import { Post } from "../models/post.model.js";
+
 import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
 import { User } from "../models/user.model.js";
@@ -131,5 +134,29 @@ const getWorkspaceDetails = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, { workspace }, "Workspace fetched successfully"))
 });
 
+const deleteWorkspace = asyncHandler(async (req, res, next) => {
+    
+    const workspaceId = req.params.workspaceId
+
+    const workspace = await Workspace.findById(workspaceId)
+    
+    if (!workspace) {
+        throw new ApiError(404, "Workspace not found")
+    }
+
+    const tasks = await Task.find({workspace:workspaceId})
+    //const posts = await Post.find({taskId:{$in:tasks.map(task=>task._id)}, status:"draft"});
+    console.log(tasks);
+    if(tasks.length>0){
+        await Task.deleteMany({workspace:workspaceId})
+        await Post.deleteMany({taskId:{$in:tasks.map(task=>task._id)} , status:"draft"});
+    }
+
+    await Workspace.findByIdAndDelete(workspaceId)
+    
+
+    return res.status(200).json(new ApiResponse(200, {}, "Workspace deleted successfully"))
+})
+
 export { createWorkspace, addEditor , getAllWorkspaces
-     , getEditorWorkspaces , getWorkspace , getWorkspaceDetails};
+     , getEditorWorkspaces , getWorkspace , getWorkspaceDetails , deleteWorkspace };
