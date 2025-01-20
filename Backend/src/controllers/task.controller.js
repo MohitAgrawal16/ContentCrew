@@ -3,6 +3,7 @@ import {ApiError} from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import {Task} from "../models/task.model.js"
+import {Post} from "../models/post.model.js"
 import { ObjectId } from "mongodb";
 
 const createTask = asyncHandler(async (req, res, next) => {
@@ -72,4 +73,21 @@ const getTaskDetails = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, { task }, "Task fetched successfully"))
 })
 
-export { createTask , getAllTasks , getTaskDetails}
+const deleteTask = asyncHandler(async (req, res, next) => {
+    
+    const taskId = req.params.taskId
+
+    const task = await Task.findById(taskId)
+
+    if (!task) {
+        throw new ApiError(404, "Task not found")
+    }
+    
+    await Post.deleteMany({taskId : taskId}, {status:"draft"})
+    await Task.findByIdAndDelete(taskId)
+
+    return res.status(200).json(new ApiResponse(200, {}, "Task deleted successfully"))
+
+})
+
+export { createTask , getAllTasks , getTaskDetails , deleteTask}

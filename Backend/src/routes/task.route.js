@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { createTask , getAllTasks , getTaskDetails} from "../controllers/task.controller.js";
+import { createTask , getAllTasks , getTaskDetails , deleteTask} from "../controllers/task.controller.js";
 
 const taskRouter = Router();
 
@@ -16,5 +16,7 @@ taskRouter.route("/").post(upload.fields([{
 
 //taskRouter.route("/:workspaceId").get(getAllTasks);
 taskRouter.route("/:taskId").get(getTaskDetails);
+
+taskRouter.route("/:taskId").delete(deleteTask);
 
 export { taskRouter };
