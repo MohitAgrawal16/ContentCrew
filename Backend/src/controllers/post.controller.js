@@ -30,12 +30,16 @@ const createPost = asyncHandler(async (req, res, next) => {
         by=req.Owner;
     }
     
-    if(!taskId){
+    if(taskId){
 
-        const task=await Task.find(taskId);
-
+        const task=await Task.findById(taskId);
+        //console.log(task);
         if(!task) throw new ApiError(404, "Task not found")
+
+        task.status="in-progress";
+        await task.save();
     }
+
     const post = await Post.create({
         caption,
         media,
@@ -99,6 +103,16 @@ const uploadPost = asyncHandler(async (req, res, next) => {
     // if (post.by !== req.user._id) {
     //     throw new ApiError(403, "You are not authorized to upload this post")
     // }
+
+    if(post.taskId){
+
+        const task=await Task.findById(post.taskId);
+
+        if(!task) throw new ApiError(404, "Task not found")
+
+        task.status="done";
+        await task.save();
+    }
 
     post.status = "uploaded"
     await post.save()
