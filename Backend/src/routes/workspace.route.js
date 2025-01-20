@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { createWorkspace, addEditor , getAllWorkspaces 
-    , getEditorWorkspaces , getWorkspace , getWorkspaceDetails , deleteWorkspace} from "../controllers/workspace.controller.js";
+    , getEditorWorkspaces , getWorkspace , getWorkspaceDetails 
+    , deleteWorkspace , deleteEditor} from "../controllers/workspace.controller.js";
 import { get } from "mongoose";
 
 const workspaceRouter = Router();
@@ -18,5 +19,7 @@ workspaceRouter.route("/editor").get(getEditorWorkspaces);
 workspaceRouter.route("/:workspaceId").get(getWorkspaceDetails);
 
 workspaceRouter.route("/:workspaceId").delete(deleteWorkspace);
+
+workspaceRouter.route("/:workspaceId/:editorId").delete(deleteEditor);
 
 export { workspaceRouter };

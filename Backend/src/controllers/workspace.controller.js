@@ -158,5 +158,24 @@ const deleteWorkspace = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, {}, "Workspace deleted successfully"))
 })
 
+const deleteEditor = asyncHandler(async (req, res, next) => {
+    
+    const {editorId , workspaceId} = req.params
+  
+    const workspace = await Workspace.findById(workspaceId)
+
+    if (!workspace) {
+        throw new ApiError(404, "Workspace not found")
+    }
+
+    workspace.editors = workspace.editors.filter(editor=>!editor.equals(editorId))
+
+    await workspace.save()
+
+    return res.status(200).json(new ApiResponse(200, { workspace }, "Editor removed from workspace successfully"))
+
+})
+
 export { createWorkspace, addEditor , getAllWorkspaces
-     , getEditorWorkspaces , getWorkspace , getWorkspaceDetails , deleteWorkspace };
+     , getEditorWorkspaces , getWorkspace , getWorkspaceDetails , 
+     deleteWorkspace , deleteEditor };
