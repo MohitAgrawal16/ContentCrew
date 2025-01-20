@@ -82,6 +82,7 @@ const TaskDetails = () => {
       })
       .catch((error) => {
         console.error("Error:", error);
+        toast.error(error.response.data.message);
       });
   };
 
@@ -151,7 +152,7 @@ const TaskDetails = () => {
           <h1 className="text-3xl font-bold mb-4">{task.title}</h1>
           <p className="text-lg text-gray-700 mb-6">{task.description}</p>
 
-          {task != null && task.media.length != 0 && (
+          {task != null && task.media.length != 0 && (post==null || post.status=="draft") && (
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">Media Files:</h2>
               <div className="grid grid-cols-3 gap-4">
@@ -247,7 +248,7 @@ const TaskDetails = () => {
                 </div>
 
                 {/* Role-Specific Actions */}
-                {userRole === "editor" && !isEditing && (
+                {post?.status=="draft" && userRole === "editor" && !isEditing && (
                   <button
                     onClick={() => {
                       setCaption(post.caption);
@@ -276,7 +277,7 @@ const TaskDetails = () => {
                     Post
                   </button>
                 )}
-                {userRole === "owner" && post.status === "uploaded" && (
+                {post.status === "uploaded" && (
                   <p className="text-green-600 font-semibold mt-4">
                     Post has been uploaded.
                   </p>

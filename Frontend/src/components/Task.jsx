@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import DeleteComp from "./DeleteComp";
+import { useState } from "react";
 
 const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
-  
   
   const navigate = useNavigate();
 
@@ -10,7 +11,10 @@ const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
     navigate(`/workspace/${workspaceId}/task/${task._id}`);
   };
 
+  const [showModal, setShowModal] = useState(false);
+
   return (
+    <>
     <div
       className="bg-white shadow-md rounded-md p-4 flex justify-between items-center cursor-pointer hover:bg-gray-100"
       onClick={handleTaskClick}
@@ -34,8 +38,8 @@ const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
           <button
             className="text-blue-200 hover:text-blue-300"
             onClick={(e) => {
-              e.stopPropagation(); // Prevent click propagation
-              deleteTask(task._id);
+              e.stopPropagation(); 
+              setShowModal(true);
             }}
             title="Delete Task"
           >
@@ -44,6 +48,19 @@ const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
         </div>
       )}
     </div>
+
+     {/* Delete Modal */}
+     <DeleteComp
+        show={showModal}
+        onClose={() => setShowModal(false)} 
+        onConfirm={()=> {
+          deleteTask(task._id);
+          setShowModal(false);
+        }}
+        message={`Are you sure you want to delete ${task.title} task?
+        This will also delete all draft posts.`} 
+      />
+    </>
   );
 };
 
