@@ -13,6 +13,8 @@ const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
 
   const [showModal, setShowModal] = useState(false);
 
+  
+
   return (
     <>
     <div
@@ -25,7 +27,7 @@ const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
       </div>
       {userRole === "owner" && (
         <div className="flex items-center gap-4">
-          <button
+          {/* <button
             className="text-green-500 hover:text-green-700"
             onClick={(e) => {
               e.stopPropagation(); // Prevent click propagation
@@ -34,7 +36,7 @@ const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
             title="Mark as Done"
           >
             <span className="material-icons">check_circle</span>
-          </button>
+          </button> */}
           <button
             className="text-blue-200 hover:text-blue-300"
             onClick={(e) => {

@@ -101,23 +101,28 @@ const TaskDetails = () => {
 
   const handleEditPost = () => {
     setIsEditing(false);
-    //setPost((prev) => ({ ...prev, caption, media }));
-    // const formData = new FormData();
-    // media.forEach((file) => {
-    //   formData.append("media", file);
-    // });
-    // formData.append("caption", caption);
 
-    // apiClient.patch(`/post/${post._id}`,formData)
-    //   .then((response) => {
-    //     console.log(response.data);
-    //     setPost(response.data.data.post);
-    //     setCaption("");
-    //     setMedia([]);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error:", error);
-    //   });
+    const newMedia = media.filter((file) => typeof file !== "string");
+    const oldMedia = media.filter((file) => typeof file === "string");
+    
+    const formData = new FormData();
+    newMedia.forEach((file) => {
+      formData.append("media", file);
+    });
+    formData.append("caption", caption);
+    formData.append("oldMedia", JSON.stringify(oldMedia));
+
+    apiClient.patch(`/post/${post._id}`,formData)
+      .then((response) => {
+        console.log(response.data);
+        setPost(response.data.data.post);
+        setCaption("");
+        setMedia([]);
+        setMediaPreview([]);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const handleImageUpload = (event) => {
@@ -204,7 +209,7 @@ const TaskDetails = () => {
                   {isEditing ? (
                     <>
                       <div className="flex overflow-x-scroll gap-4 mb-4">
-                        {media.map((img, idx) => (
+                        {mediaPrieview.map((img, idx) => (
                           <div key={idx} className="relative">
                             <img
                               src={img}

@@ -137,11 +137,7 @@ const WorkspaceDetails = () => {
   };
 
   const markTaskAsDone = (taskId) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, status: "done" } : task
-      )
-    );
+     // not needed as of now
   };
 
 
