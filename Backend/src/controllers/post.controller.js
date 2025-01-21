@@ -1,42 +1,42 @@
-import {asyncHandler} from "../utils/asyncHandler.js";
-import {ApiError} from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Post } from "../models/post.model.js";
-import {Task} from "../models/task.model.js";
+import { Task } from "../models/task.model.js";
 
 const createPost = asyncHandler(async (req, res, next) => {
-    const { caption , taskId } = req.body
+    const { caption, taskId } = req.body
 
     const mediaLocalPaths = req.files?.media?.map(temp => temp.path)
-  
-    if(mediaLocalPaths==null){
+
+    if (mediaLocalPaths == null) {
         throw new ApiError(400, "Please provide media files")
     }
 
     let media = await Promise.all(mediaLocalPaths.map(async (path) => {
         return await uploadOnCloudinary(path)
     }))
-    
+
     if (media.includes(null)) {
         throw new ApiError(500, "Post creation failed")
     }
 
     media = media.map(file => file.url);
-    
-    let by=req.user._id;
-    
-    if(req.Owner){
-        by=req.Owner;
+
+    let by = req.user._id;
+
+    if (req.Owner) {
+        by = req.Owner;
     }
-    
-    if(taskId){
 
-        const task=await Task.findById(taskId);
+    if (taskId) {
+
+        const task = await Task.findById(taskId);
         //console.log(task);
-        if(!task) throw new ApiError(404, "Task not found")
+        if (!task) throw new ApiError(404, "Task not found")
 
-        task.status="in-progress";
+        task.status = "in-progress";
         await task.save();
     }
 
@@ -44,13 +44,13 @@ const createPost = asyncHandler(async (req, res, next) => {
         caption,
         media,
         by,
-        status:"draft",
+        status: "draft",
         taskId
-    })  
+    })
 
     if (!post) {
         throw new ApiError(500, "Post creation failed")
-    } 
+    }
 
     return res.status(201).json(new ApiResponse(201, { post }, "Post created successfully"))
 })
@@ -60,40 +60,40 @@ const createAndUploadPost = asyncHandler(async (req, res, next) => {
 
     const mediaLocalPaths = req.files?.media?.map(temp => temp.path)
     // console.log(mediaLocalPaths);
-    
-    if(mediaLocalPaths==null){
+
+    if (mediaLocalPaths == null) {
         throw new ApiError(400, "Please provide media files")
     }
 
     let media = await Promise.all(mediaLocalPaths.map(async (path) => {
         return await uploadOnCloudinary(path)
     }))
-    
+
     if (media.includes(null)) {
         throw new ApiError(500, "Post creation failed")
     }
 
     media = media.map(file => file.url);
-    
-    let by=req.user._id;
+
+    let by = req.user._id;
 
     const post = await Post.create({
         caption,
         media,
         by,
-        status:"uploaded",
-    })  
+        status: "uploaded",
+    })
 
     if (!post) {
         throw new ApiError(500, "Post creation failed")
-    } 
+    }
 
     return res.status(201).json(new ApiResponse(201, { post }, "Post created successfully"))
 })
 
 const uploadPost = asyncHandler(async (req, res, next) => {
     const { postId } = req.params
-   // console.log(postId);
+    // console.log(postId);
     const post = await Post.findById(postId)
 
     if (!post) {
@@ -104,13 +104,13 @@ const uploadPost = asyncHandler(async (req, res, next) => {
     //     throw new ApiError(403, "You are not authorized to upload this post")
     // }
 
-    if(post.taskId){
+    if (post.taskId) {
 
-        const task=await Task.findById(post.taskId);
+        const task = await Task.findById(post.taskId);
 
-        if(!task) throw new ApiError(404, "Task not found")
+        if (!task) throw new ApiError(404, "Task not found")
 
-        task.status="done";
+        task.status = "done";
         await task.save();
     }
 
@@ -118,25 +118,25 @@ const uploadPost = asyncHandler(async (req, res, next) => {
     await post.save()
 
     return res.status(200).json(new ApiResponse(200, { post }, "Post uploaded successfully"))
-})   
+})
 
 
 const getAllPosts = asyncHandler(async (req, res, next) => {
-      
+
     const posts = await Post.find(
-        { $and:[{status:"uploaded"},{by:req.user._id}] }
-    ).sort({createdAt:-1})
+        { $and: [{ status: "uploaded" }, { by: req.user._id }] }
+    ).sort({ createdAt: -1 })
 
     return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
 })
 
 const getAlldraftPosts = asyncHandler(async (req, res, next) => {
-        
-        const posts = await Post.find(
-            { $and:[{status:"draft"},{by:req.user._id},{taskId:null}] }  
-        ).sort({createdAt:-1})
 
-        return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
+    const posts = await Post.find(
+        { $and: [{ status: "draft" }, { by: req.user._id }, { taskId: null }] }
+    ).sort({ createdAt: -1 })
+
+    return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
 })
 
 const getPostofTask = asyncHandler(async (req, res, next) => {
@@ -148,7 +148,7 @@ const getPostofTask = asyncHandler(async (req, res, next) => {
 })
 
 const getPostofHome = asyncHandler(async (req, res, next) => {
-    
+
     const posts = await Post.aggregate([
         {
             $match: {
@@ -160,14 +160,14 @@ const getPostofHome = asyncHandler(async (req, res, next) => {
                 //     {status:"draft"},
                 //     {by:req.user._id}
                 // ]
-                by:{ $ne: req.user._id },
-                status:"uploaded"
+                by: { $ne: req.user._id },
+                status: "uploaded"
             }
         },
         {
             $sort: {
                 createdAt: -1
-            }    
+            }
         },
         {
             $lookup: {
@@ -187,7 +187,7 @@ const getPostofHome = asyncHandler(async (req, res, next) => {
                 "userDetails.email": 0,
             }
         }
-    ])         
+    ])
 
     return res.status(200).json(new ApiResponse(200, { posts }, "All posts fetched successfully"))
 })
@@ -195,7 +195,8 @@ const getPostofHome = asyncHandler(async (req, res, next) => {
 
 const editPost = asyncHandler(async (req, res, next) => {
     const { postId } = req.params
-    const { caption } = req.body
+    const { caption} = req.body
+    const oldMedia = JSON.parse(req.body.oldMedia);
 
     const post = await Post.findById(postId)
 
@@ -203,29 +204,39 @@ const editPost = asyncHandler(async (req, res, next) => {
         throw new ApiError(404, "Post not found")
     }
     const mediaLocalPaths = req.files?.media?.map(temp => temp.path)
-  
-    if(mediaLocalPaths==null){
+
+    if(mediaLocalPaths==null && (oldMedia==null || oldMedia.length==0)){
         throw new ApiError(400, "Please provide media files")
     }
-
-    let media = await Promise.all(mediaLocalPaths.map(async (path) => {
-        return await uploadOnCloudinary(path)
-    }))
     
-    if (media.includes(null)) {
-        throw new ApiError(500, "Post creation failed")
-    }
+    let finalMedia = oldMedia || [];
 
-    media = media.map(file => file.url);
+    if (mediaLocalPaths) {
+        let media = await Promise.all(mediaLocalPaths.map(async (path) => {
+            return await uploadOnCloudinary(path)
+        }))
+
+        if (media.includes(null)) {
+            throw new ApiError(500, "Post creation failed")
+        }
+
+        media = media.map(file => file.url);
+
+        media.forEach(file => {
+            finalMedia.push(file);
+        });
+    }
     
     post.caption = caption
-    post.media = media
-    
+    post.media = finalMedia;
+
     await post.save()
 
     return res.status(200).json(new ApiResponse(200, { post }, "Post edited successfully"))
 })
 
 
-export { createPost , uploadPost , getAllPosts , 
-    getAlldraftPosts , getPostofTask , getPostofHome , editPost , createAndUploadPost};
+export {
+    createPost, uploadPost, getAllPosts,
+    getAlldraftPosts, getPostofTask, getPostofHome, editPost, createAndUploadPost
+};
