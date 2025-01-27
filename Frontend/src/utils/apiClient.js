@@ -1,78 +1,80 @@
 import axios from "axios";
-//import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
+import { store } from "../store/store.js";
 
-// Create an Axios instance
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL, // Replace with your actual API base URL
-  withCredentials: true, // Include credentials (cookies)
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
 });
 
-// Add a request interceptor
-// apiClient.interceptors.request.use((config) => {
-//   // Get the access token from cookies
-//   const accessToken = Cookies.get("accessToken");
 
-//   if (accessToken) {
-//     config.headers.Authorization = `Bearer ${accessToken}`;
-//   }
+export const apiFunc = () => {
 
-//   return config;
-// });
+  apiClient.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      console.log(error);
+      // const dispatch = useDispatch();
+      // const Navigate = useNavigate();
+      if (error.response?.status === 401) {
+        console.log("Unauthorized");
+        store.dispatch(logout());
+        //dispatch(logout());
+        //Navigate("/loginAgain");
+      }
+      return Promise.reject(error);
+    }
+  );
+  return apiClient;
+}
 
-// Add a response interceptor
-// apiClient.interceptors.response.use(
-//   (response) => response, // Pass through the response if successful
-//   async (error) => {
-//     console.log(error);
-  
-//     if (error.response?.status === 401) {
-//       // Get the refresh token from cookies
-//      // const refreshToken = Cookies.get("refreshToken");
-//      // console.log(refreshToken);
-//      console.log("hi");
-//       // if (refreshToken) {
-//         try {
-//           // Attempt to refresh the token
-//           const backend_url=import.meta.env.VITE_BACKEND_URL;
-//           const  data= await axios.post(
-//             `${backend_url}/user/refresh-token`,
-//             { withCredentials: true } // Include cookies
-//           );
-//          console.log(data);
-//          console.log("check");
-//           // Update the access token in cookies
-//         //  Cookies.set("accessToken", data.data.accessToken, { secure: true, sameSite: "Strict" });
+export const axiosPrivate = () => {
 
-//           // Retry the original request with the new token
-//         //  error.config.headers.Authorization = `Bearer ${data.data.accessToken}`;
-//           return axios(error.config);
-//         } catch (refreshError) {
-//           console.error("Refresh token expired or invalid:", refreshError);
-//           return Promise.reject(refreshError);
-//         }
-//      // }
-//     }
+  // const accessToken = store.getState().auth.accessToken;
+  // console.log(accessToken);
 
-//     return Promise.reject(error);
-//   }
-// );
+  // apiClient.interceptors.request.use(
+  //   (config) => {
+  //     if (!config.headers['Authorization']) {
+  //       config.headers['Authorization'] = `Bearer ${accessToken}`;
+  //     }
+  //     return config;
+  //   },
+  //   (error) => Promise.reject(error)
+  // );
 
-// apiClient.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     console.log(error);
-//     const dispatch = useDispatch();
-//     const Navigate = useNavigate();
-//     if (error.response?.status === 401) {
-//       console.log("Unauthorized");
-//       dispatch(logout());
-//       Navigate("/loginAgain");
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+  apiClient.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      console.log(error);
+      const prevRequest = error?.config;
+      console.log(prevRequest);
+      if (error?.response?.status === 401 && !prevRequest?.sent) {
+        prevRequest.sent = true;
+        const backend_url = import.meta.env.VITE_BACKEND_URL
+
+        try {
+          const response = await axios.post(
+            `${backend_url}/user/refresh-token`,
+            {},
+            { withCredentials: true }
+          );
+          console.log(response);
+        } catch (err) {
+          console.log(err);
+          store.dispatch(logout());
+        }
+        //prevRequest.headers['Authorization'] = `Bearer ${response.data.newAccessToken}`;
+        //store.dispatch(setAccessToken(response.data.newAccessToken));
+        return apiClient.request(prevRequest);
+      }
+
+      return Promise.reject(error);
+    }
+  );
+
+  return apiClient;
+}
 
 export default apiClient;
