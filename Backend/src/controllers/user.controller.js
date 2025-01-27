@@ -22,6 +22,18 @@ const generateAccessAndRefereshTokens = async (userId) => {
     }
 }
 
+const generateAccessToken = async (userId) => {
+    try {
+        const user = await User.findById(userId)
+        const accessToken = user.generateAccessToken()
+
+        return accessToken
+
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while generating access token")
+    }
+}
+
 const registerUser = asyncHandler(async (req, res, next) => {
     const { email, password, username, firstName, lastName } = req.body
 
@@ -140,8 +152,7 @@ const logoutUser = asyncHandler(async (req, res, next) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
-    
-   // console.log(incomingRefreshToken)
+    console.log(incomingRefreshToken)
     if (!incomingRefreshToken) {
         throw new ApiError(401, "unauthorized request")
     }
@@ -151,7 +162,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             incomingRefreshToken,
             process.env.REFRESH_TOKEN_SECRET
         )
-        //console.log(decodedToken._id)
+
         const user = await User.findById(decodedToken?._id)
 
         if (!user) {
@@ -168,16 +179,29 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             secure: true
         }
 
-        const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id)
+        // const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id)
+
+        // return res
+        //     .status(200)
+        //     .cookie("accessToken", accessToken, options)
+        //     .cookie("refreshToken", refreshToken, options)
+        //     .json(
+        //         new ApiResponse(
+        //             200,
+        //             { accessToken, refreshToken},
+        //             "Access token refreshed"
+        //         )
+        //     )
+
+        const accessToken = await generateAccessToken(user._id)
 
         return res
             .status(200)
             .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", refreshToken, options)
             .json(
                 new ApiResponse(
                     200,
-                    { accessToken, refreshToken},
+                    { accessToken },
                     "Access token refreshed"
                 )
             )
