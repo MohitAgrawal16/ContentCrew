@@ -2,7 +2,7 @@ import {asyncHandler} from "../utils/asyncHandler.js";
 import {User} from "../models/user.model.js";
 import {ApiError} from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary , deleteFromCloudinary} from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken"
 
 const generateAccessAndRefereshTokens = async (userId) => {
@@ -225,4 +225,24 @@ const getUsersDetails = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, { users }, "All users fetched successfully"))
 })
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken  , getUsersDetails};
+const updateDp = asyncHandler(async (req, res, next) => {
+    const dpLocalPath = req.file?.path
+    const dp = await uploadOnCloudinary(dpLocalPath)
+    
+    const user = await User.findById(req.user._id).select("-password -refreshToken");
+
+    const oldDpPublicId= user.dp?.split("/").pop().replace(/\.[a-z]+$/i, "");
+    //console.log(oldDpPublicId);
+
+    user.dp=dp.url;
+    await user.save({ validateBeforeSave: false });
+
+    if(oldDpPublicId){
+        await deleteFromCloudinary(oldDpPublicId);
+    }   
+
+    return res.status(200).json(new ApiResponse(200, { user }, "Profile picture updated successfully"))
+})
+
+export { registerUser, loginUser, logoutUser,
+     refreshAccessToken  , getUsersDetails , updateDp};

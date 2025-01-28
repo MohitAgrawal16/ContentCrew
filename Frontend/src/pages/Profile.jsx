@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from "react-redux";
 import apiClient from "../utils/apiClient";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../store/authSlice";
+import { login } from "../store/authSlice"
+import { toast } from "react-toastify";
 
 const ProfilePage = () => {
 
@@ -14,6 +16,9 @@ const ProfilePage = () => {
   const [posts, setPosts] = useState([]);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isEditDpOpen, setIsEditDpOpen] = useState(false);
+  const [newDp, setNewDp] = useState(null); 
+  const [fileDp, setFileDp] = useState([]);
 
   useEffect(() => {
     apiClient.get("/post").then((res) => {
@@ -32,7 +37,36 @@ const ProfilePage = () => {
   }, []);
 
   const handleEditDp = (e) => {
-    console.log("Edit DP");
+    setIsEditDpOpen(true);
+  };
+
+  const handleDpChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // const reader = new FileReader();
+      // reader.onload = () => setNewDp(reader.result);
+      // reader.readAsDataURL(file);
+      setNewDp(URL.createObjectURL(file));
+      setFileDp(file);
+    }
+  };
+
+  const saveNewDp = () => {
+    
+    const formData = new FormData();
+    formData.append("dp", fileDp);
+
+    apiClient.patch("/user/updateDp", formData).then((res) => {
+      //console.log("DP Updated:", res.data.data.user.dp);
+      dispatch(login(res.data.data.user))
+      toast.success("Profile Picture Updated Successfully");
+    }
+    ).catch((err) => {
+      console.log(err);
+    });
+
+    //console.log("New DP Saved:", newDp);
+    setIsEditDpOpen(false);
   };
 
   return (
@@ -58,7 +92,7 @@ const ProfilePage = () => {
                     className="w-32 h-32 rounded-full border-4 border-blue-600 object-cover"
                   />
                   <button
-                    onClick={handleEditDp} // Add your handleEditDp function here
+                    onClick={handleEditDp}
                     className="absolute z-10 bottom-1 left-24 bg-blue-600 text-white p-1.5 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md"
                   >
                     <span className="material-icons text-sm">edit</span>
@@ -91,6 +125,47 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
+
+        {/* Edit DP Modal */}
+      {isEditDpOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h2 className="text-lg font-semibold mb-4">Edit Profile Picture</h2>
+            <div className="flex flex-col items-center">
+              {/* Current or New DP */}
+              <img
+                src={newDp || user.dp || "https://via.placeholder.com/150"}
+                alt="Profile Preview"
+                className="w-32 h-32 rounded-full border-2 border-gray-300 object-cover mb-4"
+              />
+
+              {/* Upload Button */}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleDpChange}
+                className="text-sm mb-4"
+              />
+
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setIsEditDpOpen(false)}
+                  className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveNewDp}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
