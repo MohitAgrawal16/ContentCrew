@@ -71,7 +71,7 @@ const Home = () => {
           <NewPost handleSaveDraft={handleSaveDraft} handlePost={handlePost} />
         </div>
         
-        <div className="flex-1 overflow-y-auto p-6 flex justify-center">
+        <div className="flex-1 overflow-y-auto p-6 flex justify-center scrollbar-hide">
           <div className="max-w-xl w-full">
             {posts.length!=0 && posts.map((post) => (
               <Post
@@ -79,7 +79,7 @@ const Home = () => {
                 username={post.userDetails.username}
                 dp={post.userDetails.dp}
                 caption={post.caption}
-                image={post.media[0] || null}
+                images={post.media || null}
               />
             ))}
           </div>

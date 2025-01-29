@@ -80,7 +80,7 @@ const ProfilePage = () => {
         {/* <TopBar /> */}
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 flex justify-center">
+        <div className="flex-1 overflow-y-auto p-6 flex justify-center scrollbar-hide">
           <div className="max-w-xl w-full">
             {/* Profile Section */}
             <div className="bg-white p-6 rounded-lg shadow-md mb-8">
@@ -118,7 +118,7 @@ const ProfilePage = () => {
                     username={user.username}
                     dp={user.dp}
                     caption={post.caption}
-                    image={post.media[0] || null}
+                    images={post.media|| null}
                   />
                 ))}
               </div>
