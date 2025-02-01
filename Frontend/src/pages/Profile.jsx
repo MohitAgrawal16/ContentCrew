@@ -87,7 +87,8 @@ const ProfilePage = () => {
               <div className="flex items-center relative">
                 <div className="relative">
                   <img
-                    src={user.dp || "https://via.placeholder.com/150"}
+                    src={user.dp || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+                    }
                     alt="Profile"
                     className="w-32 h-32 rounded-full border-4 border-blue-600 object-cover"
                   />

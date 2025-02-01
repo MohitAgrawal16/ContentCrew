@@ -23,7 +23,7 @@ function TopBar({value}) {
            <Link to="/profile">
             <div className="flex items-center space-x-2">
               <img
-                src={user.dp || "https://via.placeholder.com/150"}
+                src={user.dp || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
                 alt="dp"
                 className="w-10 h-10 rounded-full"
               />
