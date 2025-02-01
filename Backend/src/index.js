@@ -22,6 +22,10 @@ connectDB()
     app.listen(process.env.PORT || 7000, () => {
         console.log(`Server is running on port ${process.env.PORT}`);
     });
+
+    app.get('/', (req, res) => {
+        res.send('Hello World!')
+    })
     
    // console.log(process.env.CLOUDINARY_API_SECRET);
 }).catch((error) => {
