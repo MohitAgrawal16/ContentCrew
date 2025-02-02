@@ -101,10 +101,30 @@ const getWorkspaceDetails = asyncHandler(async (req, res, next) => {
             }
         },
         {
-            $lookup:{
+            // $lookup:{
+            //     from: "tasks",
+            //     localField: "_id",
+            //     foreignField: "workspace",
+            //     as: "tasks"
+            // }
+            $lookup: {
                 from: "tasks",
-                localField: "_id",
-                foreignField: "workspace",
+                let: { workspaceId: "$_id" },
+                pipeline: [
+                    { $match: { $expr: { $eq: ["$workspace", "$$workspaceId"] } } },
+                    { $sort: { createdAt: -1 } },
+                    { 
+                        $project: { 
+                            workspace: 0, 
+                            media: 0, 
+                            suggestions: 0, 
+                            createdAt: 0, 
+                            updatedAt: 0, 
+                            __v: 0, 
+                            description: 0 
+                        } 
+                    }
+                ],
                 as: "tasks"
             }
         },
@@ -116,13 +136,6 @@ const getWorkspaceDetails = asyncHandler(async (req, res, next) => {
                 "editors.createdAt": 0,
                 "editors.updatedAt": 0,
                 "editors.refreshToken": 0,
-                "tasks.workspace": 0,
-                "tasks.media": 0,
-                "tasks.suggestions": 0,
-                "tasks.createdAt": 0,
-                "tasks.updatedAt": 0,
-                "tasks.__v": 0,
-                "tasks.description": 0
             }
         }
     ])

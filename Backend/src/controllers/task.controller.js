@@ -36,7 +36,7 @@ const createTask = asyncHandler(async (req, res, next) => {
 
 const getAllTasks = asyncHandler(async (req, res, next) => {
     
-    const tasks = await Task.find({workspace:req.params.workspaceId})
+    const tasks = await Task.find({workspace:req.params.workspaceId}).sort({createdAt: -1})
 
     return res.status(200).json(new ApiResponse(200, { tasks }, "All tasks fetched successfully"))
 })
