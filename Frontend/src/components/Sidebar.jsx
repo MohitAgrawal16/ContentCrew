@@ -47,7 +47,7 @@ const Sidebar = () => {
                 Workspace
               </Link>
             </li>
-            <li className="mb-4">
+            {/* <li className="mb-4">
               <Link
                 to="/projects"
                 className={`flex items-center px-3 py-2 rounded-md hover:bg-blue-500 ${
@@ -57,8 +57,8 @@ const Sidebar = () => {
                 <span className="material-icons mr-3">folder</span>
                 Projects
               </Link>
-            </li>
-            <li className="mb-4">
+            </li> */}
+            {/* <li className="mb-4">
               <Link
                 to="/calendar"
                 className={`flex items-center px-3 py-2 rounded-md hover:bg-blue-500 ${
@@ -68,8 +68,8 @@ const Sidebar = () => {
                 <span className="material-icons mr-3">calendar_today</span>
                 Calendar
               </Link>
-            </li>
-            <li className="mb-4">
+            </li> */}
+            {/* <li className="mb-4">
               <Link
                 to="/documents"
                 className={`flex items-center px-3 py-2 rounded-md hover:bg-blue-500 ${
@@ -79,8 +79,8 @@ const Sidebar = () => {
                 <span className="material-icons mr-3">description</span>
                 Documents
               </Link>
-            </li>
-            <li className="mb-4">
+            </li> */}
+            {/* <li className="mb-4">
               <Link
                 to="/reports"
                 className={`flex items-center px-3 py-2 rounded-md hover:bg-blue-500 ${
@@ -90,13 +90,13 @@ const Sidebar = () => {
                 <span className="material-icons mr-3">bar_chart</span>
                 Reports
               </Link>
-            </li>
+            </li> */}
           </ul>
         </nav>
       </div>
       <div className="px-4 py-6">
         <Logout />
-        <Link
+        {/* <Link
           to="/settings"
           className={`flex items-center px-3 py-2 rounded-md hover:bg-blue-500 ${
             location.pathname === '/settings' ? 'bg-blue-700 font-medium' : ''
@@ -104,7 +104,7 @@ const Sidebar = () => {
         >
           <span className="material-icons mr-3">settings</span>
           Settings
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
