@@ -20,12 +20,14 @@ import {userRouter} from './routes/user.route.js';
 import {postRouter} from './routes/post.route.js';
 import {workspaceRouter} from './routes/workspace.route.js';
 import {taskRouter} from './routes/task.route.js';
-
+import {messageRouter} from './routes/message.route.js';
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/workspace", workspaceRouter);
 app.use("/api/v1/task", taskRouter);
+app.use("/api/v1/message", messageRouter);
+
 
 
 export {app};

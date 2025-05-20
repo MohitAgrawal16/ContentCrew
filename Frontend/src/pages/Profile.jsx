@@ -17,7 +17,7 @@ const ProfilePage = () => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [isEditDpOpen, setIsEditDpOpen] = useState(false);
-  const [newDp, setNewDp] = useState(null); 
+  const [newDp, setNewDp] = useState(null);
   const [fileDp, setFileDp] = useState([]);
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const ProfilePage = () => {
   };
 
   const saveNewDp = () => {
-    
+
     const formData = new FormData();
     formData.append("dp", fileDp);
 
@@ -111,62 +111,68 @@ const ProfilePage = () => {
 
             {/* Posts Section */}
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Your Posts</h2>
-              <div className="space-y-4">
-                {posts.length != 0 && posts.map((post) => (
-                  <Post
-                    key={post._id}
-                    username={user.username}
-                    dp={user.dp}
-                    caption={post.caption}
-                    images={post.media|| null}
-                  />
-                ))}
+            <h2 className="text-2xl font-semibold mb-4">Your Posts</h2>
+            <div className="min-h-40 flex flex-col justify-center items-center space-y-4">
+                {posts.length > 0 ? (
+                  posts.map((post) => (
+                    <Post
+                      key={post._id}
+                      username={user.username}
+                      dp={user.dp}
+                      caption={post.caption}
+                      images={post.media || null}
+                    />
+                  ))
+                ) : (
+                  <div className="text-center text-gray-500 mt-4 text-xl font-sans">
+                    No posts available.
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
 
         {/* Edit DP Modal */}
-      {isEditDpOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-            <h2 className="text-lg font-semibold mb-4">Edit Profile Picture</h2>
-            <div className="flex flex-col items-center">
-              {/* Current or New DP */}
-              <img
-                src={newDp || user.dp || "https://via.placeholder.com/150"}
-                alt="Profile Preview"
-                className="w-32 h-32 rounded-full border-2 border-gray-300 object-cover mb-4"
-              />
+        {isEditDpOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+              <h2 className="text-lg font-semibold mb-4">Edit Profile Picture</h2>
+              <div className="flex flex-col items-center">
+                {/* Current or New DP */}
+                <img
+                  src={newDp || user.dp || "https://via.placeholder.com/150"}
+                  alt="Profile Preview"
+                  className="w-32 h-32 rounded-full border-2 border-gray-300 object-cover mb-4"
+                />
 
-              {/* Upload Button */}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleDpChange}
-                className="text-sm mb-4"
-              />
+                {/* Upload Button */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleDpChange}
+                  className="text-sm mb-4"
+                />
 
-              {/* Action Buttons */}
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => setIsEditDpOpen(false)}
-                  className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={saveNewDp}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Save
-                </button>
+                {/* Action Buttons */}
+                <div className="flex justify-end space-x-3">
+                  <button
+                    onClick={() => setIsEditDpOpen(false)}
+                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveNewDp}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );

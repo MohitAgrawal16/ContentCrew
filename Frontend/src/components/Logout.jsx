@@ -4,6 +4,7 @@ import {toast} from 'react-toastify';
 import { logout } from "../store/authSlice";
 import { useDispatch } from "react-redux";
 import apiClient from "../utils/apiClient";
+import { disconnectSocket } from "../store/chatSlice";
 
 const Logout = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -17,6 +18,7 @@ const Logout = () => {
       console.log(response.data);
       setShowConfirmation(false);
       dispatch(logout());
+      dispatch(disconnectSocket());
       console.log("User logged out");
       toast.success("Logged out successfully");
       navigate("/login");

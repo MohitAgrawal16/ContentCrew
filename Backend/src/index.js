@@ -1,6 +1,8 @@
 import {connectDB} from "./db/db.js";
 import dotenv from 'dotenv';
 import {app} from './app.js';
+import http from 'http';
+import {setupSocketServer} from './socket.js';
 
 dotenv.config({
     path:'./.env'
@@ -14,12 +16,14 @@ connectDB()
 .then(() => {
    
     console.log("DB connected");
+    const server = http.createServer(app);
+    const io = setupSocketServer(server);
     
     app.on("error", (error) => {
         console.log("Express server error", error);
     });
     
-    app.listen(process.env.PORT || 7000, () => {
+    server.listen(process.env.PORT || 7000, () => {
         console.log(`Server is running on port ${process.env.PORT}`);
     });
 

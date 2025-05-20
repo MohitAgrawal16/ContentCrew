@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {login , logout} from './store/authSlice'
 import {BrowserRouter as Router, Route ,Routes} from 'react-router-dom'
 import Home from './pages/Home'
-import Login from './pages/Login'
+import Login from './pages/Login.jsx'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
 import Workspace from './pages/Workspace'
@@ -12,13 +12,24 @@ import TaskDetails from './pages/TaskDetails'
 import PrivateRoute from './components/PrivateRoute'
 import { ToastContainer } from 'react-toastify'
 import LoginAgain from './pages/LoginAgain'
-
+import { initSocket, setupSocketListeners } from './store/chatSlice'
+import { useEffect } from 'react'
 
 function App() {
   
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   
+  const user =useSelector((state) => state.auth.user)
+
+  useEffect(() => {
+    if (user) {
+      dispatch(initSocket(user._id))
+      setupSocketListeners(dispatch)
+    }
+  }
+  , [user])
+
   return (
     <>
       <Router>
