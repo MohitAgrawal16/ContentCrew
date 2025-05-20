@@ -7,6 +7,8 @@ import apiClient from "../utils/apiClient";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import DeleteComp from "../components/DeleteComp";
+import UserSearch from "../components/UserSearch";
+
 
 const WorkspaceDetails = () => {
 
@@ -18,8 +20,8 @@ const WorkspaceDetails = () => {
   const [editors, setEditors] = useState([]);
   const [tasks, setTasks] = useState([]);
 
-  const [isAddingEditor, setIsAddingEditor] = useState(false);
-  const [newEditor, setNewEditor] = useState("");
+  // const [isAddingEditor, setIsAddingEditor] = useState(false);
+  // const [newEditor, setNewEditor] = useState("");
 
 
   useEffect(() => {
@@ -48,57 +50,9 @@ const WorkspaceDetails = () => {
 
   }, [workspace]);
 
-
-  // useEffect(() => {
-
-  //   apiClient.get(`/workspace/${workspaceId}`)
-  //   .then((response) => {
-  //     //console.log(response.data.data.workspace);
-  //     setWorkspace(response.data.data.workspace);
-  //    // console.log(workspace)
-  //   //  console.log(workspace.editors)
-  //     //setLoading(false);
-
-
-
-  //     // return apiClient.get('/user/UsersDetails' ,{
-  //     //   userIds:workspace.editors
-  //     // })
-  //   })
-  //   // .then((response) => {
-  //   //   console.log(response.data);
-  //   //   //setEditors(response.data.data.users.map((user) => user.name));
-  //   //   setLoading(false);
-  //   // })
-  //   .catch((error) => {
-  //     console.error("Error:", error);
-  //   });
-
-  // }, []);
-
-  // useEffect(() => {
-
-  //   if(workspace.owner === user._id) {
-  //     setUserRole("owner");
-  //   }else {
-  //     setUserRole("editor");
-  //   }
-
-  //   apiClient.get('/user/UsersDetails/' ,{
-  //         params:{
-  //           userIds:workspace.editors
-  //         }
-  //     })
-  //     .then((response) => {
-  //       setEditors(response.data.data.users.map((user) => user.username));
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     });
-  // }, [workspace]);
-
+  
   const [showModal, setShowModal] = useState(false);
+
   const deleteEditor = (editorId) => {
     
     apiClient.delete(`/workspace/${workspaceId}/${editorId}`)
@@ -112,7 +66,7 @@ const WorkspaceDetails = () => {
       });
   };
 
-  const handleAddEditor = () => {
+  const handleAddEditor = (newEditor) => {
 
     if (newEditor.trim() === "") {
       toast.error("Editor's username cannot be empty");
@@ -242,38 +196,7 @@ const WorkspaceDetails = () => {
 
 
             {userRole === "owner" && (
-              <div>
-                {!isAddingEditor ? (
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mt-2"
-                    onClick={() => setIsAddingEditor(true)}
-                  >
-                    Add Editor
-                  </button>
-                ) : (
-                  <div className="mt-4">
-                    <input
-                      type="text"
-                      placeholder="Enter editor's username"
-                      value={newEditor}
-                      onChange={(e) => setNewEditor(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                      onClick={handleAddEditor}
-                      className="ml-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                    >
-                      Add
-                    </button>
-                    <button
-                      onClick={() => setIsAddingEditor(false)}
-                      className="ml-2 bg-blue-200 text-white px-4 py-2 rounded-md hover:bg-blue-300"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-              </div>
+              <UserSearch onSelectUser={handleAddEditor} />
             )}
           </div>
 

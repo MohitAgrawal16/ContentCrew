@@ -116,7 +116,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
             new ApiResponse(
                 200,
                 {
-                    user: loggedInUser, accessToken, refreshToken
+                    user: loggedInUser
                 },
                 "User logged In Successfully"
             )
@@ -249,5 +249,25 @@ const updateDp = asyncHandler(async (req, res, next) => {
     return res.status(200).json(new ApiResponse(200, { user }, "Profile picture updated successfully"))
 })
 
+const getSearchUsers = asyncHandler(async (req, res, next) => {
+
+    const { query } = req.query
+
+    if (!query) {
+        throw new ApiError(400, "Search query is required")
+    }
+
+    const users = await User.find({
+        $or: [
+            { username: { $regex:  query, $options: "i" } },
+            { firstName: { $regex: query, $options: "i" } },
+            { lastName: { $regex: query, $options: "i" } }
+        ],
+        _id: { $ne: req.user._id } // Exclude the logged-in user from the results
+    }).select("-password -refreshToken")
+
+    return res.status(200).json(new ApiResponse(200, { users }, "Search results fetched successfully"))
+})  
+
 export { registerUser, loginUser, logoutUser,
-     refreshAccessToken  , getUsersDetails , updateDp};
+     refreshAccessToken  , getUsersDetails , updateDp, getSearchUsers};
