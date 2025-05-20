@@ -4,7 +4,7 @@ import {toast} from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import {login} from '../store/authSlice.js'
 import apiClient from '../utils/apiClient.js';
-
+import {initSocket} from '../store/chatSlice.js';
 function Login() {
 
   const [email, setEmail] = useState('');
@@ -57,9 +57,10 @@ function Login() {
      
     apiClient.post('/user/login', { email, password })
     .then((res) => {
-      console.log(res);
+      //console.log(res);
         toast.success('Login Successful');
         dispatch(login(res.data.data.user));
+        //dispatch(initSocket(res.data.data.user._id));
         navigate('/');
     })
     .catch((err) => {

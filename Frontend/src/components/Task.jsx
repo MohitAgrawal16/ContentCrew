@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import DeleteComp from "./DeleteComp";
 import { useState } from "react";
-
+import { useSelector } from "react-redux";
 const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
   
   const navigate = useNavigate();
@@ -13,18 +13,27 @@ const Task = ({ task, userRole, workspaceId, markTaskAsDone, deleteTask }) => {
 
   const [showModal, setShowModal] = useState(false);
 
-  
+  const unreadCount = useSelector((state) => state.chat.unreadCount[task._id] || 0);
 
   return (
     <>
     <div
-      className="bg-white shadow-md rounded-md p-4 flex justify-between items-center cursor-pointer hover:bg-gray-100"
+      className="relative bg-white shadow-md rounded-md p-4 flex justify-between items-center cursor-pointer hover:bg-gray-100"
       onClick={handleTaskClick}
     >
-      <div>
-        <p className="text-lg font-semibold">{task.title}</p>
+      <div className="flex flex-col">
+       <div className="flex items-center gap-2">
+         <p className="text-lg font-semibold">{task.title}</p>
+          {unreadCount > 0 && (
+           <span className="bg-blue-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+             {unreadCount}
+           </span>
+          )}
+       </div>
         <p className="text-sm text-gray-500">Status: {task.status}</p>
-      </div>
+     </div>
+
+
       {userRole === "owner" && (
         <div className="flex items-center gap-4">
           {/* <button

@@ -5,6 +5,8 @@ import apiClient from "../utils/apiClient";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import {toast}  from 'react-toastify'
+import ChatPanel from "../components/chat/ChatPanel.jsx";
+import ChatNotification from "../components/chat/ChatNotification.jsx";
 
 const TaskDetails = () => {
 
@@ -149,7 +151,9 @@ const TaskDetails = () => {
     <div className="flex h-screen">
       {/* Sidebar */}
       <Sidebar />
-
+      
+      {/* <ChatNotification taskId={taskId} /> */}
+      
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto p-6 bg-gray-100">
         <div className="max-w-4xl mx-auto bg-white shadow-md rounded-md p-6">
@@ -343,6 +347,8 @@ const TaskDetails = () => {
 
         </div>
       </div>
+
+      <ChatPanel taskId={taskId} taskTitle={task.title} workspaceId={workspaceId} />
     </div>
   );
 };

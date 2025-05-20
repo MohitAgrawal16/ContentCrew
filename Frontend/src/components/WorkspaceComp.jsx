@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import DeleteComp from './DeleteComp';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const WorkspaceComp = ({ id, name, isOwner, onDelete }) => {
 
@@ -18,9 +19,11 @@ const WorkspaceComp = ({ id, name, isOwner, onDelete }) => {
     setShowModal(true);
   }
 
+ 
+
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+      <div className="relative bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
         onClick={handleClick}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -57,6 +60,7 @@ const WorkspaceComp = ({ id, name, isOwner, onDelete }) => {
             )}
           </div>
         </div>
+          
       </div>
 
       {/* Delete Modal */}
