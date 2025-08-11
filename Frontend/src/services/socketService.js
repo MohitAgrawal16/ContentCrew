@@ -7,7 +7,7 @@ class SocketService {
 
   connect(userId) {
     if (!this.socket) {
-      this.socket = io( "http://localhost:8000", {
+      this.socket = io( process.env.BACKEND_URL, {
         query: { userId }, 
         withCredentials: true,
         reconnection: true,
